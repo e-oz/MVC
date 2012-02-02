@@ -3,66 +3,47 @@ namespace Jamm\MVC\Controllers;
 
 /**
  * Class to route query from Request to Response
- * Should be extended and method getQueryHandler should be implemented
+ * Should be extended and method getRequestHandler should be implemented
  */
 class Router implements IRouter
 {
-	/** @var \Jamm\MVC\Factories\IControllerNullObject[] */
-	protected $routes;
-	protected $QueryParser;
+	private $RequestParser;
 	/** @var IController */
 	private $FallbackController;
+	/** @var IController[] */
+	private $routes;
 
-	public function addRoute($url_prefix, \Jamm\MVC\Factories\IControllerNullObject $ControllerNullObject)
+	public function __construct(IRequestParser $RequestParser, IController $FallbackController)
 	{
-		$this->routes[$url_prefix] = $ControllerNullObject;
-	}
-
-	public function __construct(IQueryParser $QueryParser, IController $FallbackController)
-	{
-		$this->QueryParser        = $QueryParser;
+		$this->RequestParser      = $RequestParser;
 		$this->FallbackController = $FallbackController;
 	}
 
 	/**
-	 * Route query to controller and fill Response object
-	 * @param \Jamm\HTTP\IResponse $Response
-	 * @param \Jamm\MVC\Controllers\IQueryParser $QueryParser
-	 * @return void
-	 */
-	public function fillResponseForQuery(\Jamm\HTTP\IResponse $Response, IQueryParser $QueryParser)
-	{
-		$command    = $this->getCommandFromQuery($QueryParser);
-		$Controller = $this->getQueryHandler($command);
-
-		return $Controller->fillResponse($Response);
-	}
-
-	protected function getCommandFromQuery(IQueryParser $QueryParser)
-	{
-		$QueryParser->parseQueryString();
-		$query_parts = $QueryParser->getQueryArray();
-		$command     = '';
-		if (!empty($query_parts))
-		{
-			$command = trim($query_parts[0]);
-		}
-		return $command;
-	}
-
-	/**
-	 * Return IController object, associated with the current command (first part of query string)
-	 * This method contain (or reads) the map of routing and executes this map
-	 * @param string $command
+	 * Route Request to Controller
 	 * @return IController
 	 */
-	protected function getQueryHandler($command)
+	public function getControllerForRequest()
 	{
-		if (empty($command) || !isset($this->routes[$command]))
+		$route      = $this->getRouteFromRequest($this->RequestParser);
+		$Controller = $this->getRequestHandler($route);
+
+		return $Controller;
+	}
+
+	protected function getRouteFromRequest(IRequestParser $RequestParser)
+	{
+		return trim($RequestParser->getQueryArrayItem(0));
+	}
+
+	protected function getRequestHandler($route)
+	{
+		$Controller = $this->getControllerForRoute($route);
+		if (empty($Controller))
 		{
-			return $this->getFallbackController();
+			$Controller = $this->getFallbackController();
 		}
-		return $this->routes[$command]->getController();
+		return $Controller;
 	}
 
 	protected function getFallbackController()
@@ -73,5 +54,43 @@ class Router implements IRouter
 	public function setFallbackController(IController $Controller)
 	{
 		$this->FallbackController = $Controller;
+	}
+
+	public function addRouteForController($route, IController $Controller)
+	{
+		$this->routes[$this->getFilteredRouteString($route)] = $Controller;
+	}
+
+	private function getFilteredRouteString($route)
+	{
+		$route = trim(trim($route, '/'));
+		if (empty($route)) $route = '/';
+		return $route;
+	}
+
+	public function getControllerForRoute($route)
+	{
+		if (empty($this->routes[$route]))
+		{
+			return false;
+		}
+		return $this->routes[$route];
+	}
+
+	public function getRouteOfController(IController $Controller)
+	{
+		if (empty($this->routes))
+		{
+			return '/';
+		}
+		foreach ($this->routes as $route => $AssignedController)
+		{
+			if ($Controller===$AssignedController)
+			{
+				return $route;
+			}
+		}
+		trigger_error('Not assigned route for controller '.get_class($Controller), E_USER_WARNING);
+		return '/?';
 	}
 }

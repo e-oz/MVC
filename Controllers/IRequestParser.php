@@ -1,18 +1,8 @@
 <?php
 namespace Jamm\MVC\Controllers;
 
-interface IQueryParser
+interface IRequestParser
 {
-	/**
-	 * Parse query string from mod_rewrite data
-	 * EXAMPLE of .htaccess (it can be config in vhosts or in nginx locations):
-	 * <IfModule mod_rewrite.c>
-	 *	 RewriteEngine On
-	 *	 RewriteRule ^(.*)$ index.php [QSA,L]
-	 * </IfModule>
-	 */
-	public function parseQueryString();
-
 	public function getQueryString();
 
 	/** @param string $query_string	 */
@@ -33,7 +23,10 @@ interface IQueryParser
 	/**
 	 * Set item of the query array
 	 * @param int $index
-	 * @param string|numeric $value
+	 * @param string $value
 	 */
 	public function setQueryArrayItem($index, $value);
+
+	/** @return array|null */
+	public function getRequestArguments();	
 }

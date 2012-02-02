@@ -5,85 +5,71 @@ Base interfaces, classes to create MVC-designed application
 ###Main concept
 This architecture is designed to be used with Dependency Injection.  
 It is not complete application and can be used only as base for building MVC applications.  
-Here is only 3 classes: QueryParser, Router and View (Fallback and Container is just examples), most important here is interfaces.  
+Here is only 3 classes: RequestParser, Router and TemplatesRenderer (Fallback and Container is just examples), most important here is interfaces.  
 
 ###How it works
-Query, parsed in Front Controller, goes to Router, from Router to Controller, Controller fills Response and this Response sends back to user.
+Request, parsed in Front Controller, goes to Router, from Router to Controller, Controller fills Response and this Response sends back to user.
 
 ###Dependencies
 Jamm\\ **HTTP**  
 Symfony\\ **Twig**  
 
 ###Example of Front Controller
-*index.php of one working project*
 
-	$DependenciesContainer = new Factories\Container();
-	$QueryParser           = $DependenciesContainer->getQueryParser();
-	$FallbackController    = new Controllers\Fallback();
-	$Router                = new Controllers\Router($QueryParser, $FallbackController);
-	$EntityConverter       = $DependenciesContainer->getEntityConverter();
-	
-	$Router->addRoute('courier', new NullObjects\Courier($QueryParser, $DependenciesContainer, $EntityConverter));
-	$Router->addRoute('help', new NullObjects\Help($DependenciesContainer, $DependenciesContainer));
-	$Router->addRoute('order', new NullObjects\Order($QueryParser, $DependenciesContainer));
-	
-	$Response = $DependenciesContainer->getNewDefaultResponseObject();
-	
-	$Router->fillResponseForQuery($Response, $QueryParser);
-	
-	$Response->Send();
-
-###Example of NullObject Controller
-
-	class Courier implements \Jamm\MVC\Factories\IControllerNullObject
-	{
-		private $QueryParser;
-		private $APIClientFactory;
-		private $EntityConverter;
-	
-		public function __construct(\Jamm\MVC\Controllers\IQueryParser $QueryParser, Factories\IAPIClient $APIClientFactory, \Jamm\DataMapper\EntityConverter $EntityConverter)
-		{
-			$this->QueryParser      = $QueryParser;
-			$this->APIClientFactory = $APIClientFactory;
-			$this->EntityConverter  = $EntityConverter;
-		}
-	
-		/**
-		 * @return IController
-		 */
-		public function getController()
-		{
-			$Controller = new Controllers\Courier($this->QueryParser, $this->APIClientFactory, $this->EntityConverter);
-			Return $Controller;
-		}
-	}
+	$RedisServer        = new \Jamm\Memory\RedisServer();
+    $Request            = new \Jamm\HTTP\Request();
+    $RequestParser      = new \Jamm\MVC\Controllers\RequestParser($Request);
+    $TemplatesRenderer  = new \Jamm\RedisDashboard\View\TemplatesRenderer();
+    $FallbackController = new Controller\Fallback($RedisServer, $TemplatesRenderer);
+    $Router             = new \Jamm\MVC\Controllers\Router($RequestParser, $FallbackController);
+    $Response           = new \Jamm\HTTP\Response();
+    
+    $TemplatesRenderer->setBaseURL('/redis');
+    $Request->BuildFromInput();
+    $Router->addRouteForController('db', new Controller\Database($RedisServer, $RequestParser, $TemplatesRenderer));
+    $Router->addRouteForController('key', new Controller\DBKey($RedisServer, $RequestParser, $TemplatesRenderer));
+    
+    $Response->setHeader('Content-type', 'text/html; charset=UTF-8');
+    
+    $Controller = $Router->getControllerForRequest();
+    $Controller->fillResponse($Response);
+    $Response->Send();
 
 ###Example of Controller
 
-	class CourierMessages implements \Jamm\MVC\Controllers\IController
-	{
-		/** @var \Jamm\MVC\Controllers\IQueryParser */
-		private $QueryParser;
-		/** @var API\IClient */
-		private $APIClient;
-		/** @var \Jamm\DataMapper\EntityConverter */
-		private $EntityConverter;
-	
-		public function __construct(\Jamm\MVC\Controllers\IQueryParser $QueryParser, Factories\IAPIClient $APIClientFactory, \Jamm\DataMapper\EntityConverter $EntityConverter)
-		{
-			$this->QueryParser     = $QueryParser;
-			$this->APIClient       = $APIClientFactory->getAPIClient();
-			$this->EntityConverter = $EntityConverter;
-		}
-	
-		/**
-		 * @param \Jamm\HTTP\IResponse $Response
-		 */
-		public function fillResponse(\Jamm\HTTP\IResponse $Response)
-		{
-			// And here should be code of controller :)
-		}
-	}
+	class Fallback implements \Jamm\MVC\Controllers\IController
+    {
+    	private $Redis;
+    	private $TemplatesRenderer;
+    
+    	public function __construct(\Jamm\Memory\IRedisServer $Redis,
+    								\Jamm\MVC\Views\ITemplatesRenderer $TemplatesRenderer)
+    	{
+    		$this->Redis             = $Redis;
+    		$this->TemplatesRenderer = $TemplatesRenderer;
+    	}
+    
+    	public function fillResponse(\Jamm\HTTP\IResponse $Response)
+    	{
+    		$StatsMonitor = $this->getNewStatsMonitor($this->Redis);
+    		$stats        = $StatsMonitor->getStats();
+    		$databases    = $StatsMonitor->getDatabases();
+    
+    		$template = $this->TemplatesRenderer->render_Twig_template(
+    			'IndexPage.twig', array('databases' => $databases, 'stats' => $stats));
+    		$Response->setBody($template);
+    	}
+    
+    	/**
+    	 * @param \Jamm\Memory\IRedisServer $Redis
+    	 * @return \Jamm\RedisDashboard\Model\StatsMonitor
+    	 */
+    	protected function getNewStatsMonitor(\Jamm\Memory\IRedisServer $Redis)
+    	{
+    		return new \Jamm\RedisDashboard\Model\StatsMonitor($Redis);
+    	}
+    }
+
 
 ###License
 [MIT](http://en.wikipedia.org/wiki/MIT_License)
