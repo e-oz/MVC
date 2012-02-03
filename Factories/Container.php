@@ -5,7 +5,7 @@ namespace Jamm\MVC\Factories;
  * Example of container, which can be useful as universal class for different
  * requirements in objects constructors.
  * For example, if we have 3 classes, where
- * class 1 requires RequestParser factory,
+ * class 1 requires Request factory,
  * class 2 requires MemoryStorage factory,
  * class 3 requires PDO factory.
  * So if Container will implement 3 these interfaces, we can pass $Container object in

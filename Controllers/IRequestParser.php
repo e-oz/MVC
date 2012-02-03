@@ -3,8 +3,6 @@ namespace Jamm\MVC\Controllers;
 
 interface IRequestParser
 {
-	public function getQueryString();
-
 	/** @param string $query_string	 */
 	public function setQueryString($query_string);
 

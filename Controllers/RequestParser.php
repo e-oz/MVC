@@ -13,7 +13,7 @@ class RequestParser implements IRequestParser
 		$this->Request = $Request;
 	}
 
-	public function getQueryString()
+	private function getQueryString()
 	{
 		if (!isset($this->query_string))
 		{
@@ -38,7 +38,8 @@ class RequestParser implements IRequestParser
 
 	private function parseQueryString()
 	{
-		$QUERY = addslashes($this->getQueryString());
+		$Request = $this->Request;
+		$QUERY   = addslashes($this->getQueryString());
 		if (empty($QUERY)) return false;
 		while (strpos($QUERY, '..')!==false)
 		{
@@ -52,8 +53,24 @@ class RequestParser implements IRequestParser
 		}
 		if (strpos($QUERY, $this->script_name)===0) $QUERY = substr($QUERY, strlen($this->script_name));
 		if ($QUERY[0]==='&') $QUERY = substr($QUERY, 1);
+
+		if (($ampersand_pos = strpos($QUERY, '&'))!==false)
+		{
+			if ($Request->getMethod()==$Request::method_GET)
+			{
+				$Request->setData(array());
+				$get_array = explode('&', substr($QUERY, $ampersand_pos+1));
+				foreach ($get_array as $get_element)
+				{
+					list($get_key, $get_value) = explode('=', $get_element);
+					$this->Request->setDataKey($get_key, $get_value);
+				}
+			}
+			$this->query_string = substr($QUERY, 0, $ampersand_pos);
+			$QUERY              = $this->query_string;
+		}
 		if (strpos($QUERY, '/')!==false) $this->query_array = explode('/', $QUERY);
-		elseif (strpos($QUERY, '&')!==false) $this->query_array = explode('&', $QUERY);
+
 		else $this->query_array = array($QUERY);
 		return $this->query_array;
 	}
