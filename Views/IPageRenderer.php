@@ -9,5 +9,9 @@ interface IPageRenderer
 
 	public function setBaseURL($base_url);
 
+	public function getBaseURL();
+
 	public function setFullUrl($full_url);
+
+	public function getFullUrl();
 }

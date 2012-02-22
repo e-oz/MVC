@@ -30,14 +30,6 @@ abstract class PageRenderer implements IPageRenderer
 	}
 
 	/**
-	 * @return string Without ending slash
-	 */
-	protected function getBaseURL()
-	{
-		return $this->base_url;
-	}
-
-	/**
 	 * @param string $base_url
 	 */
 	public function setBaseURL($base_url)
@@ -48,7 +40,7 @@ abstract class PageRenderer implements IPageRenderer
 	/**
 	 * @return string Without ending slash
 	 */
-	protected function getFullUrl()
+	public function getFullUrl()
 	{
 		return $this->full_url;
 	}
@@ -64,5 +56,10 @@ abstract class PageRenderer implements IPageRenderer
 	public function setTemplatesDir($templates_dir)
 	{
 		$this->templates_dir = rtrim($templates_dir, '/');
+	}
+
+	public function getBaseUrl()
+	{
+		return $this->base_url;
 	}
 }
