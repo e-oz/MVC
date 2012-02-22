@@ -75,7 +75,7 @@ class RequestParser implements IRequestParser
 		return $this->query_array;
 	}
 
-	/** @param string $query_string	 */
+	/** @param string $query_string     */
 	public function setQueryString($query_string)
 	{
 		$this->query_string = $query_string;
@@ -150,5 +150,24 @@ class RequestParser implements IRequestParser
 			return array_slice($parts, 1);
 		}
 		return NULL;
+	}
+
+	public function getAcceptedSerializer()
+	{
+		$serialization_method = $this->Request->getAccept();
+		switch ($serialization_method)
+		{
+			case 'JSON':
+				return new \Jamm\HTTP\SerializerJSON();
+				break;
+			case 'XML':
+				return new \Jamm\HTTP\SerializerXML();
+				break;
+			case 'PHP':
+				return new \Jamm\HTTP\SerializerPHP();
+				break;
+			default:
+				return NULL;
+		}
 	}
 }

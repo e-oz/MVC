@@ -32,8 +32,8 @@ abstract class Container implements IRequestParser, IPDOConnection
 
 	public function getNewDefaultResponseObject()
 	{
-		$response = new \Jamm\HTTP\Response();
-		$response->setHeader('Content-type', 'text/html; charset=UTF-8');
-		return $response;
+		$Response = new \Jamm\HTTP\Response();
+		$Response->setHeader('Content-type', 'text/html; charset=UTF-8');
+		return $Response;
 	}
 }
