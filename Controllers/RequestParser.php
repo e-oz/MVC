@@ -17,19 +17,15 @@ class RequestParser implements IRequestParser
 	{
 		if (!isset($this->query_string))
 		{
-			$this->script_name = !empty($script_name) ? $script_name : pathinfo($this->Request->getHeaders('SCRIPT_NAME'), PATHINFO_BASENAME);
-			if (!empty($query_string)) $this->query_string = $query_string;
-			else
+			$this->script_name  = !empty($script_name) ? $script_name : pathinfo($this->Request->getHeaders('SCRIPT_NAME'), PATHINFO_BASENAME);
+			$path_info          = $this->Request->getHeaders('PATH_INFO');
+			$this->query_string = !empty($path_info) ? $path_info : $this->Request->getHeaders('QUERY_STRING');
+			if (empty($this->query_string))
 			{
-				$path_info          = $this->Request->getHeaders('PATH_INFO');
-				$this->query_string = !empty($path_info) ? $path_info : $this->Request->getHeaders('QUERY_STRING');
-				if (empty($this->query_string))
+				$dirname = dirname($this->script_name);
+				if (strpos($this->Request->getHeaders('REQUEST_URI'), $dirname)===0)
 				{
-					$dirname = dirname($this->script_name);
-					if (strpos($this->Request->getHeaders('REQUEST_URI'), $dirname)===0)
-					{
-						$this->query_string = substr($this->Request->getHeaders('REQUEST_URI'), strlen($dirname));
-					}
+					$this->query_string = substr($this->Request->getHeaders('REQUEST_URI'), strlen($dirname));
 				}
 			}
 		}
@@ -69,8 +65,10 @@ class RequestParser implements IRequestParser
 			$this->query_string = substr($QUERY, 0, $ampersand_pos);
 			$QUERY              = $this->query_string;
 		}
-		if (strpos($QUERY, '/')!==false) $this->query_array = explode('/', $QUERY);
-
+		if (strpos($QUERY, '/')!==false)
+		{
+			$this->query_array = explode('/', $QUERY);
+		}
 		else $this->query_array = array($QUERY);
 		return $this->query_array;
 	}
@@ -117,7 +115,7 @@ class RequestParser implements IRequestParser
 		$this->query_array[$index] = $value;
 	}
 
-	public function getRequestArguments()
+	public function getRequestArguments($skip_path_parts_count = 1)
 	{
 		$data    = $this->Request->getData();
 		$Request = $this->Request;
@@ -125,29 +123,28 @@ class RequestParser implements IRequestParser
 		{
 			if (is_array($data))
 			{
-				$values = array_slice(array_values($data), 1);
+				$values = array_values($data);
 				if (!empty($values))
 				{
 					$values_without_spaces = implode('', $values);
 					if (!empty($values_without_spaces))
 					{
-						return $values;
+						return $data;
 					}
 				}
 			}
-			$values = $this->getArgumentsFromQueryString();
+			$values = $this->getArgumentsFromQueryString($skip_path_parts_count);
 			if (!empty($values)) return $values;
 		}
 		return $data;
 	}
 
-	private function getArgumentsFromQueryString()
+	private function getArgumentsFromQueryString($skip_path_parts_count = 1)
 	{
-		$query_string = $this->getQueryString();
-		if (strpos($query_string, '/')!==false)
+		$parts = $this->getQueryArray();
+		if (!empty($parts))
 		{
-			$parts = explode('/', $query_string);
-			return array_slice($parts, 1);
+			return array_slice($parts, $skip_path_parts_count);
 		}
 		return NULL;
 	}
@@ -163,11 +160,13 @@ class RequestParser implements IRequestParser
 			case 'XML':
 				return new \Jamm\HTTP\SerializerXML();
 				break;
-			case 'PHP':
-				return new \Jamm\HTTP\SerializerPHP();
-				break;
 			default:
 				return NULL;
 		}
+	}
+
+	protected function getRequest()
+	{
+		return $this->Request;
 	}
 }
