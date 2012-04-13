@@ -59,7 +59,7 @@ class RequestParser implements IRequestParser
 				foreach ($get_array as $get_element)
 				{
 					list($get_key, $get_value) = explode('=', $get_element);
-					$this->Request->setDataKey($get_key, $get_value);
+					$this->Request->setDataKey($get_key, rawurldecode($get_value));
 				}
 			}
 			$this->query_string = substr($QUERY, 0, $ampersand_pos);
