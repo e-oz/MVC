@@ -54,13 +54,9 @@ class RequestParser implements IRequestParser
 		{
 			if ($Request->getMethod()==$Request::method_GET)
 			{
-				$Request->setData(array());
-				$get_array = explode('&', substr($QUERY, $ampersand_pos+1));
-				foreach ($get_array as $get_element)
-				{
-					list($get_key, $get_value) = explode('=', $get_element);
-					$this->Request->setDataKey($get_key, rawurldecode($get_value));
-				}
+				$get_array = array();
+				parse_str(substr($QUERY, $ampersand_pos+1), $get_array);
+				$Request->setData($get_array);
 			}
 			$this->query_string = substr($QUERY, 0, $ampersand_pos);
 			$QUERY              = $this->query_string;
