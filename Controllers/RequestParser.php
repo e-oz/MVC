@@ -13,7 +13,7 @@ class RequestParser implements IRequestParser
 		$this->Request = $Request;
 	}
 
-	private function getQueryString()
+	public function getQueryString()
 	{
 		if (!isset($this->query_string))
 		{
@@ -148,17 +148,21 @@ class RequestParser implements IRequestParser
 	public function getAcceptedSerializer()
 	{
 		$serialization_method = $this->Request->getAccept();
-		switch ($serialization_method)
+		if (stripos($serialization_method, 'JSON')!==false)
 		{
-			case 'JSON':
-				return new \Jamm\HTTP\SerializerJSON();
-				break;
-			case 'XML':
-				return new \Jamm\HTTP\SerializerXML();
-				break;
-			default:
-				return NULL;
+			$Serializer = new \Jamm\HTTP\SerializerJSON();
+			$callback = $this->Request->getData('callback');
+			if (!empty($callback))
+			{
+				$Serializer->setJSONPCallbackName($callback);
+			}
+			return $Serializer;
 		}
+		elseif ($serialization_method==='XML')
+		{
+			return new \Jamm\HTTP\SerializerXML();
+		}
+		return NULL;
 	}
 
 	protected function getRequest()
