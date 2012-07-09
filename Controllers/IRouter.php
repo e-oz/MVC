@@ -1,6 +1,5 @@
 <?php
 namespace Jamm\MVC\Controllers;
-
 interface IRouter
 {
 	public function getControllerForRequest();
@@ -9,7 +8,7 @@ interface IRouter
 
 	public function addRouteForController($route, IController $Controller);
 
-	public function getControllerForRoute($route);
+	public function addRouteCallbackFunction($route, $callback_function);
 
-	public function getRouteOfController(IController $Controller);
+	public function getControllerForRoute($route);
 }

@@ -1,6 +1,5 @@
 <?php
 namespace Jamm\MVC\Controllers;
-
 /**
  * Class to route query from Request to Response
  * Should be extended and method getRequestHandler should be implemented
@@ -10,7 +9,7 @@ class Router implements IRouter
 	private $RequestParser;
 	/** @var IController */
 	private $FallbackController;
-	/** @var IController[] */
+	/** @var IController[]|callable[] */
 	private $routes;
 
 	public function __construct(IRequestParser $RequestParser, IController $FallbackController)
@@ -27,7 +26,6 @@ class Router implements IRouter
 	{
 		$route      = $this->getRouteFromRequest($this->RequestParser);
 		$Controller = $this->getRequestHandler($route);
-
 		return $Controller;
 	}
 
@@ -74,23 +72,17 @@ class Router implements IRouter
 		{
 			return false;
 		}
-		return $this->routes[$route];
+		$controller = $this->routes[$route];
+		if (is_callable($controller))
+		{
+			$controller           = $controller();
+			$this->routes[$route] = $controller;
+		}
+		return $controller;
 	}
 
-	public function getRouteOfController(IController $Controller)
+	public function addRouteCallbackFunction($route, $callback_function)
 	{
-		if (empty($this->routes))
-		{
-			return '/';
-		}
-		foreach ($this->routes as $route => $AssignedController)
-		{
-			if ($Controller===$AssignedController)
-			{
-				return $route;
-			}
-		}
-		trigger_error('Not assigned route for controller '.get_class($Controller), E_USER_WARNING);
-		return '/?';
+		$this->routes[$this->getFilteredRouteString($route)] = $callback_function;
 	}
 }
