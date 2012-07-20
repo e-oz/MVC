@@ -1,6 +1,5 @@
 <?php
 namespace Jamm\MVC\Controllers;
-
 class RequestParser implements IRequestParser
 {
 	private $query_array;
@@ -42,14 +41,12 @@ class RequestParser implements IRequestParser
 			$QUERY = str_replace('..', '', $QUERY);
 		}
 		if (empty($QUERY)) return false;
-
 		if ($QUERY[0]==='/')
 		{
 			$QUERY = substr($QUERY, 1);
 		}
 		if (strpos($QUERY, $this->script_name)===0) $QUERY = substr($QUERY, strlen($this->script_name));
 		if ($QUERY[0]==='&') $QUERY = substr($QUERY, 1);
-
 		if (($ampersand_pos = strpos($QUERY, '&'))!==false)
 		{
 			if ($Request->getMethod()==$Request::method_GET)
@@ -151,7 +148,7 @@ class RequestParser implements IRequestParser
 		if (stripos($serialization_method, 'JSON')!==false)
 		{
 			$Serializer = new \Jamm\HTTP\SerializerJSON();
-			$callback = $this->Request->getData('callback');
+			$callback   = $this->Request->getData('callback');
 			if (!empty($callback))
 			{
 				$Serializer->setJSONPCallbackName($callback);

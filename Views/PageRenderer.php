@@ -1,6 +1,5 @@
 <?php
 namespace Jamm\MVC\Views;
-
 abstract class PageRenderer implements IPageRenderer
 {
 	private $base_url;

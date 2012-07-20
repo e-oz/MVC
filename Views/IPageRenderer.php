@@ -1,6 +1,5 @@
 <?php
 namespace Jamm\MVC\Views;
-
 interface IPageRenderer
 {
 	public function setTemplatesDir($templates_dir);

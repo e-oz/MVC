@@ -1,6 +1,5 @@
 <?php
 namespace Jamm\MVC\Views;
-
 class HTMLRenderer extends PageRenderer
 {
 	public function renderPage($template_file_name, array $vars = array())

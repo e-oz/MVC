@@ -1,6 +1,5 @@
 <?php
 namespace Jamm\MVC\Controllers;
-
 class Fallback implements IController
 {
 	/**

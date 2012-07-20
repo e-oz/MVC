@@ -1,6 +1,5 @@
 <?php
 namespace Jamm\MVC\Factories;
-
 interface IPDOConnection
 {
 	/**

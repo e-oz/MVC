@@ -1,10 +1,9 @@
 <?php
 namespace Jamm\MVC\Views;
-
 class TwigRenderer extends PageRenderer
 {
 	private $TwigLoader;
-	
+
 	protected function getTwigEnvironment()
 	{
 		return new \Twig_Environment($this->getTwigLoader());
@@ -40,5 +39,5 @@ class TwigRenderer extends PageRenderer
 		}
 		$this->setURLsInVarsArray($vars);
 		return $template->render($vars);
-	}	
+	}
 }

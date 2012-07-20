@@ -1,6 +1,5 @@
 <?php
 namespace Jamm\MVC\Controllers;
-
 interface IRequestParser
 {
 	public function getQueryString();

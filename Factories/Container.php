@@ -1,6 +1,5 @@
 <?php
 namespace Jamm\MVC\Factories;
-
 /**
  * Example of container, which can be useful as universal class for different
  * requirements in objects constructors.
