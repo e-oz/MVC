@@ -16,7 +16,7 @@ class RequestParser implements IRequestParser
 	{
 		if (!isset($this->query_string))
 		{
-			$this->script_name  = !empty($script_name) ? $script_name : pathinfo($this->Request->getHeaders('SCRIPT_NAME'), PATHINFO_BASENAME);
+			$this->script_name  = pathinfo($this->Request->getHeaders('SCRIPT_NAME'), PATHINFO_BASENAME);
 			$path_info          = $this->Request->getHeaders('PATH_INFO');
 			$this->query_string = !empty($path_info) ? $path_info : $this->Request->getHeaders('QUERY_STRING');
 			if (empty($this->query_string))
@@ -66,7 +66,7 @@ class RequestParser implements IRequestParser
 		return $this->query_array;
 	}
 
-	/** @param string $query_string     */
+	/** @param string $query_string */
 	public function setQueryString($query_string)
 	{
 		$this->query_string = $query_string;
