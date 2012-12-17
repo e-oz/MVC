@@ -14,7 +14,7 @@
 	},
 	"autoload": {
 		"psr-0": {
-			"Jamm\\MVC": ""
+			"Jamm\\MVC": "src/Jamm/MVC"
 		}
 	},
 	"type": "library",
