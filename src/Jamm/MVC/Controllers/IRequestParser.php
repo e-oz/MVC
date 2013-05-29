@@ -1,10 +1,11 @@
 <?php
 namespace Jamm\MVC\Controllers;
+
 interface IRequestParser
 {
 	public function getQueryString();
 
-	/** @param string $query_string     */
+	/** @param string $query_string */
 	public function setQueryString($query_string);
 
 	/** @return array */
@@ -36,4 +37,7 @@ interface IRequestParser
 	 * @return \Jamm\HTTP\ISerializer|NULL
 	 */
 	public function getAcceptedSerializer();
+
+	/** @return \Jamm\HTTP\IRequest */
+	public function getRequestObject();
 }

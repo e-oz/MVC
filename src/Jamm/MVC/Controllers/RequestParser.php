@@ -162,7 +162,7 @@ class RequestParser implements IRequestParser
 		return NULL;
 	}
 
-	protected function getRequest()
+	public function getRequestObject()
 	{
 		return $this->Request;
 	}
