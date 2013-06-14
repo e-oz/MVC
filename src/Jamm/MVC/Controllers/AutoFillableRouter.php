@@ -10,7 +10,7 @@ class AutoFillableRouter extends Router
 	 * @param string $prefix_namespace
 	 * @return bool
 	 */
-	public function fillRoutesFromList(RoutesList $RoutesList, IServiceContainer $ServiceContainer, $prefix_namespace = '')
+	public function fillRoutesFromList(RoutesList $RoutesList, IServiceContainer $ServiceContainer = null, $prefix_namespace = '')
 	{
 		$routes = $RoutesList->getRoutes();
 		if (empty($routes))
@@ -32,7 +32,10 @@ class AutoFillableRouter extends Router
 				}
 				/** @var IAutoInstantiable $Controller */
 				$Controller = new $controller_name();
-				$Controller->setServiceContainer($ServiceContainer);
+				if (!empty($ServiceContainer))
+				{
+					$Controller->setServiceContainer($ServiceContainer);
+				}
 				return $Controller;
 			});
 		}
