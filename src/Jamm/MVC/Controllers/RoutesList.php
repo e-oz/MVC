@@ -6,6 +6,11 @@ class RoutesList
 	/** @var array */
 	private $routes = [];
 
+	public function __construct(array $routes = [])
+	{
+		$this->routes = $routes;
+	}
+
 	/**
 	 * @param array $routes where key is a route and value is a name of controller class, which imlement IFixedCtorController
 	 * @return bool
