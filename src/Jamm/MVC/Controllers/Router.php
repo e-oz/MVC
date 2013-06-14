@@ -31,7 +31,29 @@ class Router implements IRouter
 
 	protected function getRouteFromRequest(IRequestParser $RequestParser)
 	{
-		return trim($RequestParser->getQueryArrayItem(0));
+		$parts = $RequestParser->getQueryArray();
+		if (empty($parts))
+		{
+			return '/';
+		}
+		foreach ($this->routes as $route => $fx)
+		{
+			$pattern = '';
+			foreach ($parts as $part)
+			{
+				$pattern .= $part;
+				if ($route===$pattern)
+				{
+					return $route;
+				}
+				$pattern .= '/';
+			}
+		}
+		if (!isset($parts[0]) || $parts[0]==='')
+		{
+			$parts[0] = '/';
+		}
+		return $parts[0];
 	}
 
 	protected function getRequestHandler($route)
