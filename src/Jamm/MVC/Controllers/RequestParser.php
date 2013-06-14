@@ -26,6 +26,10 @@ class RequestParser implements IRequestParser
 				{
 					$this->query_string = substr($this->Request->getHeaders('REQUEST_URI'), strlen($dirname));
 				}
+				elseif (empty($dirname) || $dirname==='.')
+				{
+					$this->query_string = $this->Request->getHeaders('REQUEST_URI');
+				}
 			}
 		}
 		return $this->query_string;
