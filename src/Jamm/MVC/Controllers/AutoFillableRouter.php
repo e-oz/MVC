@@ -6,11 +6,11 @@ class AutoFillableRouter extends Router
 {
 	/**
 	 * @param RoutesList $RoutesList
-	 * @param \Jamm\MVC\Factories\IServiceContainer $ServiceContainer
 	 * @param string $prefix_namespace
+	 * @param \Jamm\MVC\Factories\IServiceContainer $ServiceContainer
 	 * @return bool
 	 */
-	public function fillRoutesFromList(RoutesList $RoutesList, IServiceContainer $ServiceContainer = null, $prefix_namespace = '')
+	public function fillRoutesFromList(RoutesList $RoutesList, $prefix_namespace = '', IServiceContainer $ServiceContainer = null)
 	{
 		$routes = $RoutesList->getRoutes();
 		if (empty($routes))
