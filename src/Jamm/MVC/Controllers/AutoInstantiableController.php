@@ -12,5 +12,8 @@ abstract class AutoInstantiableController implements IAutoInstantiable
 		$this->ServiceContainer = $ServiceContainer;
 	}
 
-	abstract public function getServiceContainer();
+	public function getServiceContainer()
+	{
+		return $this->ServiceContainer;
+	}
 }
