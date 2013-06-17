@@ -27,8 +27,9 @@ abstract class RESTController implements IAutoInstantiable
 	 */
 	public function fillResponse(\Jamm\HTTP\IResponse $Response)
 	{
-		$this->Request = $this->ServiceContainer->getRequest();
-		$this->Parser  = $this->ServiceContainer->getRequestParser();
+		$this->Request  = $this->ServiceContainer->getRequest();
+		$this->Parser   = $this->ServiceContainer->getRequestParser();
+		$this->Response = $Response;
 		switch ($this->Request->getMethod())
 		{
 			case 'GET':
