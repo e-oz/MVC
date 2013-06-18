@@ -5,7 +5,7 @@ use Jamm\MVC\Controllers\IRequireServiceLocator;
 
 class ControllerBuilder implements IControllerBuilder
 {
-	private $ServiceLocator;
+	protected $ServiceLocator;
 
 	public function __construct(IControllersServiceLocator $ServiceLocator)
 	{
