@@ -6,7 +6,7 @@ use Jamm\HTTP\IResponse;
 use Jamm\MVC\Factories\ControllersServiceLocator;
 use Jamm\MVC\Factories\IControllersServiceLocator;
 
-abstract class RESTController implements IAutoInstantiable, IRequireServiceLocator
+abstract class RESTController extends AutoInstantiableController implements IAutoInstantiable, IRequireServiceLocator
 {
 	/** @var ControllersServiceLocator */
 	protected $ServiceLocator;
