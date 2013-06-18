@@ -5,6 +5,9 @@ use Jamm\HTTP\Request;
 use Jamm\HTTP\Response;
 use Jamm\MVC\Controllers\IRequestParser;
 
+/**
+ * Should return only new instances. Not cached, not cloned.
+ */
 class ServiceFactory implements IServiceFactory
 {
 	public function getRequest()

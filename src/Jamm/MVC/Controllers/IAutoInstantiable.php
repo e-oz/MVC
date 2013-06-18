@@ -1,9 +1,12 @@
 <?php
 namespace Jamm\MVC\Controllers;
 
-use Jamm\MVC\Factories\IServiceContainer;
+use Jamm\MVC\Factories\IControllersServiceLocator;
 
 interface IAutoInstantiable extends IController
 {
-	public function setServiceContainer(IServiceContainer $ServiceContainer);
+	/** exactly empty constructor */
+	public function __construct();
+
+	public function setServiceLocator(IControllersServiceLocator $ServiceLocator);
 }

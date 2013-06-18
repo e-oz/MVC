@@ -1,16 +1,17 @@
 <?php
 namespace Jamm\MVC\Controllers;
-use Jamm\MVC\Factories\IServiceContainer;
+
+use Jamm\MVC\Factories\IControllersServiceLocator;
 
 class AutoFillableRouter extends Router
 {
 	/**
 	 * @param RoutesList $RoutesList
 	 * @param string $prefix_namespace
-	 * @param \Jamm\MVC\Factories\IServiceContainer $ServiceContainer
+	 * @param \Jamm\MVC\Factories\IControllersServiceLocator $ServiceLocator
 	 * @return bool
 	 */
-	public function fillRoutesFromList(RoutesList $RoutesList, $prefix_namespace = '', IServiceContainer $ServiceContainer = null)
+	public function fillRoutesFromList(RoutesList $RoutesList, $prefix_namespace = '', IControllersServiceLocator $ServiceLocator = null)
 	{
 		$routes = $RoutesList->getRoutes();
 		if (empty($routes))
@@ -23,7 +24,7 @@ class AutoFillableRouter extends Router
 			{
 				$controller_name = '\\'.trim($prefix_namespace, '\\').'\\'.$controller_name;
 			}
-			$this->addRouteCallbackFunction($route, function () use ($controller_name, $ServiceContainer)
+			$this->addRouteCallbackFunction($route, function () use ($controller_name, $ServiceLocator)
 			{
 				if (!class_exists($controller_name))
 				{
@@ -32,9 +33,9 @@ class AutoFillableRouter extends Router
 				}
 				/** @var IAutoInstantiable $Controller */
 				$Controller = new $controller_name();
-				if (!empty($ServiceContainer))
+				if (!empty($ServiceLocator))
 				{
-					$Controller->setServiceContainer($ServiceContainer);
+					$Controller->setServiceLocator($ServiceLocator);
 				}
 				return $Controller;
 			});

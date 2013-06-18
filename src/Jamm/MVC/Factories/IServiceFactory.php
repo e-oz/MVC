@@ -1,6 +1,9 @@
 <?php
 namespace Jamm\MVC\Factories;
 
+/**
+ * Should return only new instances. Not cached, not cloned.
+ */
 interface IServiceFactory
 {
 	/**

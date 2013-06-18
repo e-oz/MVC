@@ -3,13 +3,13 @@ namespace Jamm\MVC\Controllers;
 
 use Jamm\HTTP\IRequest;
 use Jamm\HTTP\IResponse;
-use Jamm\MVC\Factories\IServiceContainer;
-use Jamm\MVC\Factories\ServiceContainer;
+use Jamm\MVC\Factories\ControllersServiceLocator;
+use Jamm\MVC\Factories\IControllersServiceLocator;
 
 abstract class RESTController implements IAutoInstantiable
 {
-	/** @var ServiceContainer */
-	protected $ServiceContainer;
+	/** @var ControllersServiceLocator */
+	protected $ServiceLocator;
 	/** @var IRequest */
 	protected $Request;
 	/** @var IResponse */
@@ -17,9 +17,9 @@ abstract class RESTController implements IAutoInstantiable
 	/** @var IRequestParser */
 	protected $Parser;
 
-	public function setServiceContainer(IServiceContainer $ServiceContainer)
+	public function setServiceLocator(IControllersServiceLocator $ServiceLocator)
 	{
-		$this->ServiceContainer = $ServiceContainer;
+		$this->ServiceLocator = $ServiceLocator;
 	}
 
 	/**
@@ -27,8 +27,8 @@ abstract class RESTController implements IAutoInstantiable
 	 */
 	public function fillResponse(\Jamm\HTTP\IResponse $Response)
 	{
-		$this->Request  = $this->ServiceContainer->getRequest();
-		$this->Parser   = $this->ServiceContainer->getRequestParser();
+		$this->Request  = $this->ServiceLocator->getRequest();
+		$this->Parser   = $this->ServiceLocator->getRequestParser();
 		$this->Response = $Response;
 		switch ($this->Request->getMethod())
 		{

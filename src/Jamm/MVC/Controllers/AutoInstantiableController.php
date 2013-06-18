@@ -1,19 +1,21 @@
 <?php
 namespace Jamm\MVC\Controllers;
 
-use Jamm\MVC\Factories\IServiceContainer;
+use Jamm\MVC\Factories\IControllersServiceLocator;
 
 abstract class AutoInstantiableController implements IAutoInstantiable
 {
-	protected $ServiceContainer;
+	protected $ServiceLocator;
 
-	public function setServiceContainer(IServiceContainer $ServiceContainer)
+	final public function __construct() { }
+
+	public function setServiceLocator(IControllersServiceLocator $ServiceLocator)
 	{
-		$this->ServiceContainer = $ServiceContainer;
+		$this->ServiceLocator = $ServiceLocator;
 	}
 
-	public function getServiceContainer()
+	public function getServiceLocator()
 	{
-		return $this->ServiceContainer;
+		return $this->ServiceLocator;
 	}
 }

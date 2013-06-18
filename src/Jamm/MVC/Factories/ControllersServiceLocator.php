@@ -5,7 +5,14 @@ use Jamm\HTTP\IRequest;
 use Jamm\MVC\Controllers\IRequestParser;
 use Jamm\MVC\Controllers\RequestParser;
 
-class ServiceContainer implements IServiceContainer
+/**
+ * ServiceLocator is ONLY for Controllers!
+ * For Models and other reusable code use Dependency Injection
+ * @link http://martinfowler.com/articles/injection.html
+ *
+ * It's jus example, but you can extend and use it if you find existing methods useful
+ */
+class ControllersServiceLocator implements IControllersServiceLocator
 {
 	private $Request;
 	private $RequestParser;
