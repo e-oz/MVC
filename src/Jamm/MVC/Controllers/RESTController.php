@@ -6,7 +6,7 @@ use Jamm\HTTP\IResponse;
 use Jamm\MVC\Factories\ControllersServiceLocator;
 use Jamm\MVC\Factories\IControllersServiceLocator;
 
-abstract class RESTController implements IAutoInstantiable
+abstract class RESTController implements IAutoInstantiable, IRequireServiceLocator
 {
 	/** @var ControllersServiceLocator */
 	protected $ServiceLocator;
@@ -17,7 +17,7 @@ abstract class RESTController implements IAutoInstantiable
 	/** @var IRequestParser */
 	protected $Parser;
 
-	public function setServiceLocator(IControllersServiceLocator $ServiceLocator)
+	public function initServiceLocator(IControllersServiceLocator $ServiceLocator)
 	{
 		$this->ServiceLocator = $ServiceLocator;
 	}
@@ -30,6 +30,7 @@ abstract class RESTController implements IAutoInstantiable
 		$this->Request  = $this->ServiceLocator->getRequest();
 		$this->Parser   = $this->ServiceLocator->getRequestParser();
 		$this->Response = $Response;
+		$this->beforeFillingResponse();
 		switch ($this->Request->getMethod())
 		{
 			case 'GET':
@@ -100,4 +101,6 @@ abstract class RESTController implements IAutoInstantiable
 		}
 		$this->Response->setBody($headers_string);
 	}
+
+	protected function beforeFillingResponse() { }
 }
