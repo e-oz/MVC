@@ -3,16 +3,15 @@ MVC
 Base interfaces, classes to create MVC-designed application  
 
 ###Main concept
-This architecture is designed to be used with Dependency Injection.  
-It is not complete application and can be used only as base for building MVC applications.  
-Here is only 3 classes: RequestParser, Router and TemplatesRenderer (Fallback and Container is just examples), most important here is interfaces.  
+It can be used as a base for building MVC applications.  
+Most important thing here is interfaces - base of architecture.  
 
 ###How it works
-Request, parsed in Front Controller, goes to Router, from Router to Controller, Controller fills Response and this Response sends back to user.
+Request, parsed in Front Controller, goes to Router, from Router to Controller, Controller fills the Response and this Response goes back to user.
 
 ###Dependencies
-Jamm\\ **HTTP**  
-Symfony\\ **Twig**  
+Jamm\\HTTP    
+PHP 5.3+  
 
 ###Example of Front Controller
 

@@ -2,8 +2,7 @@
 	"name": "jamm/mvc",
 	"require": {
 		"php": ">=5.3.0",
-		"jamm/http": ">=1.0.0",
-		"twig/twig": ">=1.0.0"
+		"jamm/http": ">=1.0.0"
 	},
 	"description": "Tiny base frame for MVC-designed projects",
 	"version": "0.5.0",
