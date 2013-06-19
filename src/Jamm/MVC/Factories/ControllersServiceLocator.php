@@ -10,16 +10,16 @@ use Jamm\MVC\Controllers\RequestParser;
  * For Models and other reusable code use Dependency Injection
  * @link http://martinfowler.com/articles/injection.html
  *
- * It's jus example, but you can extend and use it if you find existing methods useful
+ * It's just example of implementation, but you can extend and use it if you find existing methods useful
  */
 class ControllersServiceLocator implements IControllersServiceLocator
 {
 	private $Request;
 	private $RequestParser;
-	/** @var IServiceFactory */
+	/** @var ServiceFactory */
 	private $ServiceFactory;
 
-	public function __construct(IServiceFactory $ServiceFactory)
+	public function __construct(ServiceFactory $ServiceFactory)
 	{
 		$this->ServiceFactory = $ServiceFactory;
 	}
@@ -78,5 +78,10 @@ class ControllersServiceLocator implements IControllersServiceLocator
 	public function setServiceFactory(IServiceFactory $ServiceFactory)
 	{
 		$this->ServiceFactory = $ServiceFactory;
+	}
+
+	public function getSessionAuthenticator()
+	{
+		return $this->ServiceFactory->getSessionAuthenticator($this->getRequest());
 	}
 }
