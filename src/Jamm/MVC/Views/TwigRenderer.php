@@ -20,6 +20,7 @@ class TwigRenderer extends PageRenderer
 			}
 			catch (\Twig_Error_Loader $e)
 			{
+				trigger_error('Can not instantiate TwigLoader: '.$e->getMessage(), E_USER_WARNING);
 				return false;
 			}
 		}
@@ -35,6 +36,7 @@ class TwigRenderer extends PageRenderer
 		}
 		catch (\Twig_Error_Loader $e)
 		{
+			trigger_error('Error when loading template: '.$e->getMessage(), E_USER_WARNING);
 			return false;
 		}
 		$this->setURLsInVarsArray($vars);
