@@ -12,8 +12,7 @@ interface IServiceFactory
 	public function getRequest();
 
 	/**
-	 * @param \Jamm\MVC\Controllers\IRequestParser $RequestParser
 	 * @return \Jamm\HTTP\IResponse
 	 */
-	public function getResponse(\Jamm\MVC\Controllers\IRequestParser $RequestParser);
+	public function getResponse();
 }

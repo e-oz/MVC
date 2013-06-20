@@ -14,6 +14,11 @@ class SessionAuthenticator
 	private $Session;
 	/** @var \Jamm\HTTP\IRequest */
 	private $Request;
+	/** @var string */
+	private $received_csrf_token;
+	private $csrf_header = 'HTTP_X_XSRF_TOKEN';
+	private $csrf_cookie = 'XSRF-TOKEN';
+	private $verify_token = true;
 
 	public function __construct(ISessionStorage $SessionStorage, IRequest $Request)
 	{
@@ -111,5 +116,129 @@ class SessionAuthenticator
 	public function setCookieName($cookie_name)
 	{
 		$this->cookie_name = $cookie_name;
+	}
+
+	public function getReceivedCSRFToken()
+	{
+		if (empty($this->received_csrf_token))
+		{
+			$this->received_csrf_token = $this->Request->getHeaders($this->csrf_header);
+		}
+		return $this->received_csrf_token;
+	}
+
+	public function isCSRFValid()
+	{
+		$token = $this->getReceivedCSRFToken();
+		if (empty($token)) return false;
+		$cookie_token = $this->getCookieCSRFToken();
+		if (empty($cookie_token)) return false;
+		if ($cookie_token===$token)
+		{
+			if ($this->verify_token)
+			{
+				return $this->isTokenValid($token, $this->Session->getId());
+			}
+			return true;
+		}
+		return false;
+	}
+
+	public function getCookieCSRFToken()
+	{
+		$CsrfCookie = $this->Request->getCookie($this->csrf_cookie);
+		if (empty($CsrfCookie))
+		{
+			return false;
+		}
+		return $CsrfCookie->getValue();
+	}
+
+	public function setCSRFTokenForSession(IResponse $Response)
+	{
+		$Session = $this->getSession();
+		if (empty($Session))
+		{
+			return false;
+		}
+		$csrf_token = $this->getNewCSRFTokenForSession($Session);
+		if (empty($csrf_token))
+		{
+			return false;
+		}
+		$Cookie = new Cookie('XSRF-TOKEN', $csrf_token, 0, '/', '', false, false);
+		$Response->setCookie($Cookie);
+	}
+
+	public function getNewCSRFTokenForSession(ISession $Session)
+	{
+		if (!$Session->getId())
+		{
+			trigger_error('To generate safe CSRF token ID of session is required', E_USER_WARNING);
+			return false;
+		}
+		return crypt($Session->getId());
+	}
+
+	protected function isTokenValid($token, $session_id)
+	{
+		if (empty($session_id))
+		{
+			trigger_error('To verify CSRF token ID of session is required', E_USER_WARNING);
+			return false;
+		}
+		if (crypt($token, $session_id)===$session_id)
+		{
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getCsrfHeader()
+	{
+		return $this->csrf_header;
+	}
+
+	/**
+	 * @param string $csrf_header
+	 */
+	public function setCsrfHeader($csrf_header)
+	{
+		$this->csrf_header = $csrf_header;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getCsrfCookie()
+	{
+		return $this->csrf_cookie;
+	}
+
+	/**
+	 * @param string $csrf_cookie
+	 */
+	public function setCsrfCookie($csrf_cookie)
+	{
+		$this->csrf_cookie = $csrf_cookie;
+	}
+
+	/**
+	 * @return boolean
+	 */
+	public function getVerifyToken()
+	{
+		return $this->verify_token;
+	}
+
+	/**
+	 * @param boolean $validate_token
+	 */
+	public function setVerifyToken($validate_token = true)
+	{
+		$this->verify_token = $validate_token;
 	}
 }

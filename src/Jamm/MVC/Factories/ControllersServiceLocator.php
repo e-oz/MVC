@@ -2,6 +2,7 @@
 namespace Jamm\MVC\Factories;
 
 use Jamm\HTTP\IRequest;
+use Jamm\HTTP\SerializerJSON;
 use Jamm\MVC\Controllers\IRequestParser;
 use Jamm\MVC\Controllers\RequestParser;
 
@@ -18,6 +19,7 @@ class ControllersServiceLocator implements IControllersServiceLocator
 	private $RequestParser;
 	/** @var ServiceFactory */
 	private $ServiceFactory;
+	private $Response;
 
 	public function __construct(ServiceFactory $ServiceFactory)
 	{
@@ -34,6 +36,31 @@ class ControllersServiceLocator implements IControllersServiceLocator
 			$this->Request = $this->ServiceFactory->getRequest();
 		}
 		return $this->Request;
+	}
+
+	public function getResponse()
+	{
+		if (empty($this->Response))
+		{
+
+			$this->Response = $this->getServiceFactory()->getResponse();
+			$RequestParser  = $this->getRequestParser();
+			$Serializer     = $RequestParser->getAcceptedSerializer();
+			if ($Serializer instanceof SerializerJSON)
+			{
+				/**
+				 * Prefix for AngularJS, as JSON Vulnerability Protection
+				 * @link http://docs.angularjs.org/api/ng.$http
+				 *       If controller allows JSONP-requests, use setJSONPCallbackName() method
+				 *       in that controller, and prefix will not be added.
+				 */
+				/** @var SerializerJSON $Serializer */
+				$Serializer->setJSONPrefix(")]}',\n");
+			}
+			$this->Response->setSerializer($Serializer);
+			$this->getSessionAuthenticator()->setCSRFTokenForSession($this->Response);
+		}
+		return $this->Response;
 	}
 
 	/**

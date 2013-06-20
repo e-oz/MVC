@@ -4,7 +4,6 @@ namespace Jamm\MVC\Factories;
 use Jamm\HTTP\IRequest;
 use Jamm\HTTP\Request;
 use Jamm\HTTP\Response;
-use Jamm\MVC\Controllers\IRequestParser;
 use Jamm\MVC\Models\RedisStorage;
 use Jamm\MVC\Models\SessionAuthenticator;
 use Jamm\MVC\Models\SessionStorage;
@@ -21,10 +20,9 @@ class ServiceFactory implements IServiceFactory
 		return $Request;
 	}
 
-	public function getResponse(IRequestParser $RequestParser)
+	public function getResponse()
 	{
 		$Response = new Response();
-		$Response->setSerializer($RequestParser->getAcceptedSerializer());
 		return $Response;
 	}
 
