@@ -129,17 +129,18 @@ class SessionAuthenticator
 
 	public function isCSRFValid()
 	{
-		$token = $this->getReceivedCSRFToken();
-		if (empty($token)) return false;
+		$Session = $this->getSession();
+		$token   = $this->getReceivedCSRFToken();
+		if (empty($token) && !empty($Session)) return false;
 		$cookie_token = $this->getCookieCSRFToken();
-		if (empty($cookie_token)) return false;
+		if (empty($token) && !empty($Session)) return false;
 		if ($cookie_token===$token)
 		{
 			if ($this->verify_token)
 			{
-				if (!($Session = $this->getSession()))
+				if (empty($Session))
 				{
-					return false;
+					return true;
 				}
 				return $this->isTokenValid($token, $Session->getId());
 			}
@@ -192,7 +193,7 @@ class SessionAuthenticator
 			trigger_error('To verify CSRF token ID of session is required', E_USER_WARNING);
 			return false;
 		}
-		if (crypt($token, $session_id)===$session_id)
+		if (crypt($session_id, $token)===$token)
 		{
 			return true;
 		}
