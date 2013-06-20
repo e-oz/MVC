@@ -36,12 +36,16 @@ abstract class RESTController extends AutoInstantiableController implements IAut
 			case 'GET':
 				return $this->GET();
 			case 'POST':
+				if (!$this->isCSRFSafe()) return false;
 				return $this->POST();
 			case 'PUT':
+				if (!$this->isCSRFSafe()) return false;
 				return $this->PUT();
 			case 'DELETE':
+				if (!$this->isCSRFSafe()) return false;
 				return $this->DELETE();
 			case 'PATCH':
+				if (!$this->isCSRFSafe()) return false;
 				return $this->PATCH();
 			case 'OPTIONS':
 				return $this->OPTIONS();
@@ -52,6 +56,11 @@ abstract class RESTController extends AutoInstantiableController implements IAut
 			default:
 				$Response->setStatusCode(405); // Method not allowed
 		}
+	}
+
+	protected function isCSRFSafe()
+	{
+		return $this->ServiceLocator->getSessionAuthenticator()->isCSRFValid();
 	}
 
 	abstract protected function GET();

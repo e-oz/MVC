@@ -137,7 +137,11 @@ class SessionAuthenticator
 		{
 			if ($this->verify_token)
 			{
-				return $this->isTokenValid($token, $this->Session->getId());
+				if (!($Session = $this->getSession()))
+				{
+					return false;
+				}
+				return $this->isTokenValid($token, $Session->getId());
 			}
 			return true;
 		}
