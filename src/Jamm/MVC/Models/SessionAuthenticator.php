@@ -168,6 +168,7 @@ class SessionAuthenticator
 		}
 		$Cookie = new Cookie('XSRF-TOKEN', $csrf_token, 0, '/', '', false, false);
 		$Response->setCookie($Cookie);
+		return true;
 	}
 
 	public function getNewCSRFTokenForSession(ISession $Session)
