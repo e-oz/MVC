@@ -25,7 +25,7 @@ class SessionStorage implements ISessionStorage
 		{
 			return $this->insert($Session);
 		}
-		return $this->Storage->set($Session->getId(), $Session);
+		return $this->Storage->set($Session->getId(), $Session, $this->expiration_time);
 	}
 
 	protected function insert(ISession $Session)
@@ -41,7 +41,7 @@ class SessionStorage implements ISessionStorage
 				$key .= $symbols[mt_rand(0, $length)];
 			}
 			$Session->setID($key);
-			if ($this->Storage->add($key, $Session))
+			if ($this->Storage->add($key, $Session, $this->expiration_time))
 			{
 				return true;
 			}
