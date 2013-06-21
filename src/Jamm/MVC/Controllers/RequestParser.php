@@ -42,7 +42,7 @@ class RequestParser implements IRequestParser
 		return $this->request_uri;
 	}
 
-	private function parseQueryString()
+	private function parseRequestURI()
 	{
 		$Request     = $this->Request;
 		$request_uri = addslashes($this->getRequestURI());
@@ -58,7 +58,7 @@ class RequestParser implements IRequestParser
 		}
 		if (strpos($request_uri, $this->script_name)===0) $request_uri = substr($request_uri, strlen($this->script_name));
 		if ($request_uri[0]==='&') $request_uri = substr($request_uri, 1);
-		if (($ampersand_pos = strpos($request_uri, '&'))!==false)
+		if ((($ampersand_pos = strpos($request_uri, '&'))!==false) || (($ampersand_pos = strpos($request_uri, '?'))!==false))
 		{
 			if ($Request->getMethod()==$Request::method_GET)
 			{
@@ -78,7 +78,7 @@ class RequestParser implements IRequestParser
 	}
 
 	/** @param string $query_string */
-	protected function setRequesturi($query_string)
+	protected function setRequestURI($query_string)
 	{
 		$this->request_uri = $query_string;
 	}
@@ -88,7 +88,7 @@ class RequestParser implements IRequestParser
 	{
 		if (empty($this->query_array))
 		{
-			$this->parseQueryString();
+			$this->parseRequestURI();
 		}
 		return $this->query_array;
 	}
