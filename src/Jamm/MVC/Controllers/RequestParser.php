@@ -58,15 +58,15 @@ class RequestParser implements IRequestParser
 		}
 		if (strpos($request_uri, $this->script_name)===0) $request_uri = substr($request_uri, strlen($this->script_name));
 		if ($request_uri[0]==='&') $request_uri = substr($request_uri, 1);
-		if ((($ampersand_pos = strpos($request_uri, '&'))!==false) || (($ampersand_pos = strpos($request_uri, '?'))!==false))
+		if ((($delimiter_pos = strpos($request_uri, '?'))!==false) || (($delimiter_pos = strpos($request_uri, '&'))!==false))
 		{
 			if ($Request->getMethod()==$Request::method_GET)
 			{
 				$get_array = array();
-				parse_str(substr($request_uri, $ampersand_pos+1), $get_array);
+				parse_str(substr($request_uri, $delimiter_pos+1), $get_array);
 				$Request->setData($get_array);
 			}
-			$this->request_uri = substr($request_uri, 0, $ampersand_pos);
+			$this->request_uri = substr($request_uri, 0, $delimiter_pos);
 			$request_uri       = $this->request_uri;
 		}
 		if (strpos($request_uri, '/')!==false)
