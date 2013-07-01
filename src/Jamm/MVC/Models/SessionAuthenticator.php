@@ -175,7 +175,7 @@ class SessionAuthenticator
 		{
 			return false;
 		}
-		$Cookie = new Cookie('XSRF-TOKEN', $csrf_token, 0, '/', '', false, false);
+		$Cookie = new Cookie($this->csrf_cookie, $csrf_token, 0, '/', '', false, false);
 		$Response->setCookie($Cookie);
 		return true;
 	}
