@@ -130,10 +130,14 @@ class SessionAuthenticator
 	public function isCSRFValid()
 	{
 		$Session = $this->getSession();
-		$token   = $this->getReceivedCSRFToken();
-		if (empty($token) && !empty($Session)) return false;
+		if (empty($Session))
+		{
+			return true;
+		}
+		$token = $this->getReceivedCSRFToken();
+		if (empty($token)) return false;
 		$cookie_token = $this->getCookieCSRFToken();
-		if (empty($token) && !empty($Session)) return false;
+		if (empty($token)) return false;
 		if ($cookie_token===$token)
 		{
 			if ($this->verify_token)
