@@ -4,6 +4,7 @@ namespace Jamm\MVC\Factories;
 use Jamm\HTTP\IRequest;
 use Jamm\HTTP\Request;
 use Jamm\HTTP\Response;
+use Jamm\MVC\Models\ISessionStorage;
 use Jamm\MVC\Models\RedisStorage;
 use Jamm\MVC\Models\SessionAuthenticator;
 use Jamm\MVC\Models\SessionStorage;
@@ -26,9 +27,9 @@ class ServiceFactory implements IServiceFactory
 		return $Response;
 	}
 
-	public function getSessionAuthenticator(IRequest $Request)
+	public function getSessionAuthenticator(ISessionStorage $SessionStorage, IRequest $Request)
 	{
-		return new SessionAuthenticator($this->getSessionStorage(), $Request);
+		return new SessionAuthenticator($SessionStorage, $Request);
 	}
 
 	public function getSessionStorage()
