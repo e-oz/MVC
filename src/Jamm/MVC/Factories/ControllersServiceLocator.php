@@ -20,6 +20,7 @@ class ControllersServiceLocator implements IControllersServiceLocator
 	/** @var ServiceFactory */
 	private $ServiceFactory;
 	private $Response;
+	private $SessionStorage;
 
 	public function __construct(ServiceFactory $ServiceFactory)
 	{
@@ -109,6 +110,15 @@ class ControllersServiceLocator implements IControllersServiceLocator
 
 	public function getSessionAuthenticator()
 	{
-		return $this->ServiceFactory->getSessionAuthenticator($this->getRequest());
+		return $this->ServiceFactory->getSessionAuthenticator($this->getSessionStorage(), $this->getRequest());
+	}
+
+	public function getSessionStorage()
+	{
+		if (empty($this->SessionStorage))
+		{
+			$this->SessionStorage = $this->ServiceFactory->getSessionStorage();
+		}
+		return $this->SessionStorage;
 	}
 }
