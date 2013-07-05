@@ -4,11 +4,13 @@ namespace Jamm\MVC\Models;
 class Crypt
 {
 	private $encryption_string;
+	protected $cipher = \MCRYPT_RIJNDAEL_256;
+	protected $mode = \MCRYPT_MODE_CBC;
 
 	public function getHashFromPassword($password)
 	{
 		$this->requirePasswordLib();
-		return password_hash($password, PASSWORD_BCRYPT);
+		return password_hash($password, PASSWORD_DEFAULT);
 	}
 
 	protected function requirePasswordLib()
@@ -33,9 +35,9 @@ class Crypt
 	public function getEncryptedString($string, $password = '')
 	{
 		$encryption_key = $this->getEncKey($password);
-		$iv_size        = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
-		$iv             = mcrypt_create_iv($iv_size, MCRYPT_RAND);
-		$enc_string     = mcrypt_encrypt(\MCRYPT_RIJNDAEL_256, $encryption_key, $string, \MCRYPT_MODE_CBC, $iv);
+		$iv_size        = mcrypt_get_iv_size($this->cipher, $this->mode);
+		$iv             = mcrypt_create_iv($iv_size, \MCRYPT_RAND);
+		$enc_string     = mcrypt_encrypt($this->cipher, $encryption_key, $string, $this->mode, $iv);
 		$enc_string     = bin2hex($iv.$enc_string);
 		return $enc_string;
 	}
@@ -49,10 +51,10 @@ class Crypt
 	{
 		$encryption_key = $this->getEncKey($password);
 		$input          = hex2bin($input);
-		$iv_size        = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
+		$iv_size        = mcrypt_get_iv_size($this->cipher, $this->mode);
 		$iv             = substr($input, 0, $iv_size);
 		$input          = substr($input, $iv_size);
-		$string         = rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $encryption_key, $input, MCRYPT_MODE_CBC, $iv),"\0\4");
+		$string         = rtrim(mcrypt_decrypt($this->cipher, $encryption_key, $input, $this->mode, $iv), "\0\4");
 		return $string;
 	}
 
@@ -76,5 +78,21 @@ class Crypt
 	public function setEncryptionString($encryption_string)
 	{
 		$this->encryption_string = $encryption_string;
+	}
+
+	/**
+	 * @param string $cipher
+	 */
+	public function setCipher($cipher = \MCRYPT_RIJNDAEL_256)
+	{
+		$this->cipher = $cipher;
+	}
+
+	/**
+	 * @param string $mode
+	 */
+	public function setMode($mode = \MCRYPT_MODE_CBC)
+	{
+		$this->mode = $mode;
 	}
 }
