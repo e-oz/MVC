@@ -33,9 +33,9 @@ class Crypt
 	public function getEncryptedString($string, $password = '')
 	{
 		$encryption_key = $this->getEncKey($password);
-		$iv_size        = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CFB);
+		$iv_size        = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
 		$iv             = mcrypt_create_iv($iv_size, MCRYPT_RAND);
-		$enc_string     = mcrypt_encrypt(\MCRYPT_RIJNDAEL_256, $encryption_key, $string, \MCRYPT_MODE_CFB, $iv);
+		$enc_string     = mcrypt_encrypt(\MCRYPT_RIJNDAEL_256, $encryption_key, $string, \MCRYPT_MODE_CBC, $iv);
 		$enc_string     = bin2hex($iv.$enc_string);
 		return $enc_string;
 	}
@@ -49,10 +49,10 @@ class Crypt
 	{
 		$encryption_key = $this->getEncKey($password);
 		$input          = hex2bin($input);
-		$iv_size        = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CFB);
+		$iv_size        = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
 		$iv             = substr($input, 0, $iv_size);
 		$input          = substr($input, $iv_size);
-		$string         = rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $encryption_key, $input, MCRYPT_MODE_CFB, $iv),"\0\4");
+		$string         = rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $encryption_key, $input, MCRYPT_MODE_CBC, $iv),"\0\4");
 		return $string;
 	}
 
