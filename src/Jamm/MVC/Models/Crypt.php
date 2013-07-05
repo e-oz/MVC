@@ -52,7 +52,7 @@ class Crypt
 		$iv_size        = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CFB);
 		$iv             = substr($input, 0, $iv_size);
 		$input          = substr($input, $iv_size);
-		$string         = mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $encryption_key, $input, MCRYPT_MODE_CFB, $iv);
+		$string         = rtrim(mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $encryption_key, $input, MCRYPT_MODE_CFB, $iv),"\0\4");
 		return $string;
 	}
 
