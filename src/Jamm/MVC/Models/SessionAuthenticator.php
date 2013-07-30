@@ -66,7 +66,7 @@ class SessionAuthenticator
 		{
 			$this->SessionStorage->deleteByID($this->Session->getId());
 		}
-		$Response->setCookie(new Cookie($this->cookie_name, ''));
+		$Response->setCookie(new Cookie($this->cookie_name, '', time()-86400*10));
 	}
 
 	public function setUserID(IResponse $Response, $user_id, $remember = true)
