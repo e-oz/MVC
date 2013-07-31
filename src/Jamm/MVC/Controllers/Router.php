@@ -49,7 +49,7 @@ class Router implements IRouter
 				$pattern .= '/';
 			}
 		}
-		if (!isset($parts[0]) || $parts[0]==='')
+		if (!isset($parts[0]) || empty($parts[0]))
 		{
 			$parts[0] = '/';
 		}
