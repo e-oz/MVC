@@ -6,6 +6,7 @@ class RequestParser implements IRequestParser
 	private $request_uri;
 	private $script_name;
 	private $Request;
+	private $JSONP_callback_name;
 
 	public function __construct(\Jamm\HTTP\IRequest $Request)
 	{
@@ -159,10 +160,13 @@ class RequestParser implements IRequestParser
 		if (stripos($serialization_method, 'JSON')!==false)
 		{
 			$Serializer = new \Jamm\HTTP\SerializerJSON();
-			$callback   = $this->Request->getData('callback');
-			if (!empty($callback))
+			if (!empty($this->JSONP_callback_name))
 			{
-				$Serializer->setJSONPCallbackName($callback);
+				$callback = $this->Request->getData('callback');
+				if (!empty($callback))
+				{
+					$Serializer->setJSONPCallbackName($callback);
+				}
 			}
 			return $Serializer;
 		}
@@ -176,5 +180,21 @@ class RequestParser implements IRequestParser
 	public function getRequestObject()
 	{
 		return $this->Request;
+	}
+
+	/**
+	 * @return mixed
+	 */
+	public function getJSONPCallbackName()
+	{
+		return $this->JSONP_callback_name;
+	}
+
+	/**
+	 * @param mixed $JSONP_callback_name
+	 */
+	public function setJSONPCallbackName($JSONP_callback_name)
+	{
+		$this->JSONP_callback_name = $JSONP_callback_name;
 	}
 }
