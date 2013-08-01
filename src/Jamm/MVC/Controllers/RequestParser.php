@@ -46,7 +46,7 @@ class RequestParser implements IRequestParser
 	private function parseRequestURI()
 	{
 		$Request     = $this->Request;
-		$request_uri = addslashes($this->getRequestURI());
+		$request_uri = $this->getRequestURI();
 		if (empty($request_uri)) return false;
 		while (strpos($request_uri, '..')!==false)
 		{
