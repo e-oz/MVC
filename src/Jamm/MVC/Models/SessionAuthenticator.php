@@ -73,7 +73,8 @@ class SessionAuthenticator
 	{
 		if (!$Session = $this->getSession())
 		{
-			$Session = $this->SessionStorage->getNewSession();
+			$Session       = $this->SessionStorage->getNewSession();
+			$this->Session = $Session;
 		}
 		$Session->setUserId($user_id);
 		if (!$this->SessionStorage->save($Session))
