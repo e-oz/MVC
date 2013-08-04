@@ -28,32 +28,29 @@ class SessionAuthenticator
 
 	public function isAuthenticatedSession()
 	{
-		if (!$Session = $this->getSession())
-		{
-			return false;
-		}
-		if ($Session->getUserId() > 0)
-		{
-			return true;
-		}
-		return false;
+		return ($this->getSession()->getUserId() > 0);
 	}
 
 	public function getSession()
 	{
 		if (empty($this->Session))
 		{
+			$this->Session = $this->SessionStorage->getNewSession();
 			if (!$SessionCookie = $this->Request->getCookie($this->cookie_name))
 			{
-				return false;
+				return $this->Session;
 			}
 			if (!$SessionCookie->getValue())
 			{
-				return false;
+				return $this->Session;
 			}
-			if (!($this->Session = $this->SessionStorage->getByID($SessionCookie->getValue())))
+			if (!($Session = $this->SessionStorage->getByID($SessionCookie->getValue())))
 			{
-				return false;
+				return $this->Session;
+			}
+			else
+			{
+				$this->Session = $Session;
 			}
 		}
 		return $this->Session;
@@ -61,21 +58,17 @@ class SessionAuthenticator
 
 	public function logOut(IResponse $Response)
 	{
-		$this->getSession();
-		if (!empty($this->Session))
+		$Session = $this->getSession();
+		if ($Session->getId())
 		{
-			$this->SessionStorage->deleteByID($this->Session->getId());
+			$this->SessionStorage->deleteByID($Session->getId());
 		}
-		$Response->setCookie(new Cookie($this->cookie_name, '', time()-86400*10));
+		$Response->setCookie(new Cookie($this->cookie_name, ''));
 	}
 
 	public function setUserID(IResponse $Response, $user_id, $remember = true)
 	{
-		if (!$Session = $this->getSession())
-		{
-			$Session       = $this->SessionStorage->getNewSession();
-			$this->Session = $Session;
-		}
+		$Session = $this->getSession();
 		$Session->setUserId($user_id);
 		if (!$this->SessionStorage->save($Session))
 		{
@@ -96,11 +89,7 @@ class SessionAuthenticator
 
 	public function getUserID()
 	{
-		if (!$Session = $this->getSession())
-		{
-			return false;
-		}
-		return $Session->getUserId();
+		return $this->getSession()->getUserId();
 	}
 
 	/**
@@ -130,8 +119,7 @@ class SessionAuthenticator
 
 	public function isCSRFValid()
 	{
-		$Session = $this->getSession();
-		if (empty($Session))
+		if (!$this->isAuthenticatedSession())
 		{
 			return true;
 		}
@@ -143,11 +131,7 @@ class SessionAuthenticator
 		{
 			if ($this->verify_token)
 			{
-				if (empty($Session))
-				{
-					return true;
-				}
-				return $this->isTokenValid($token, $Session->getId());
+				return $this->isTokenValid($token, $this->getSession()->getId());
 			}
 			return true;
 		}
@@ -166,12 +150,11 @@ class SessionAuthenticator
 
 	public function setCSRFTokenForSession(IResponse $Response)
 	{
-		$Session = $this->getSession();
-		if (empty($Session))
+		if (!$this->isAuthenticatedSession())
 		{
 			return false;
 		}
-		$csrf_token = $this->getNewCSRFTokenForSession($Session);
+		$csrf_token = $this->getNewCSRFTokenForSession($this->getSession());
 		if (empty($csrf_token))
 		{
 			return false;
