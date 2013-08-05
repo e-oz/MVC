@@ -16,9 +16,14 @@ There is some models, which can be useful:
 * Sessions - for sessions handling (in Redis by default, but configurable).    
 * SessionAuthenticator - work with cookies and CSRF-protection. Implemented AngularJS XSRF-token protection mechanism and prefix for JSON responses.
 
-If you want, you can use some services from Models folder - they are absolutely working and used in live projects.   
+If you want, you can use some services from the Models folder - they are absolutely working and used in live projects.   
 In general, this library will never require your classes to be extended from classes of library. Main advice - prefer composition over inheritance.      
-But "never require" doesn't mean "not allow" - if you find that some of classes are good enough to use as a base classes - do it, they are designed to be useful in both ways.
+But "never require" doesn't mean "not allow" - if you find that some of classes are good enough to use as a base classes - do it, they are designed to be useful in both ways.    
+
+Also, there is templates renderers in the Views folder (PHTML and Twig), and you are welcome to use them.    
+But if you don't mind - take a look at [AngularJS](http://angularjs.org/). With [AngularJS](http://angularjs.org/) you can use native HTML-pages as templates, which can be served by nginx or Apache without PHP, 
+so your app will require much less resources of server. Also, it means less page reloading (because of ajax-requests) - performance and usability of your app will be much better.  
+It's just recommendation :)
 
 ###Dependencies
 Jamm\\HTTP    
