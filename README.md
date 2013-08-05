@@ -7,13 +7,60 @@ It can be used as a base for building MVC applications.
 Most important thing here is interfaces - base of architecture.  
 
 ###How it works
-Request, parsed in Front Controller, goes to Router, from Router to Controller, Controller fills the Response and this Response goes back to user.
+Request, parsed in Front Controller, goes to Router, from Router to Controller, Controller fills the Response and this Response goes back to user.      
+If you want, you can use some models from Models folder, but you are not forced.   
+In general, this library will never require your classes to be extended from classes of library. Main advice - prefer composition over inheritance.      
+Never require doesn't mean "not allow" - if you find that some of classes are good enough to use as a base classes - do it, they are designed to be useful in both ways.
 
 ###Dependencies
 Jamm\\HTTP    
 PHP 5.3+  
 
-###Example of Front Controller
+###Example of Front Controller with auto-fillable routing
+
+	class Launcher
+	{
+		public function start(array $config = [])
+		{
+			$ServiceFactory     = new ServiceFactory(new Config($config));
+			$ServiceLocator     = new ControllersServiceLocator($ServiceFactory);
+			$FallbackController = new IndexPage();
+			$RequestParser      = new RequestParser($ServiceFactory->getRequest());
+			$Response           = $ServiceLocator->getResponse();
+			$Router = new AutoFillableRouter($RequestParser, $FallbackController);
+			$Router->fillRoutesFromList(new RoutesList($config['routes']), __NAMESPACE__.'\\Controller', new ControllerBuilder($ServiceLocator));
+			$Controller = $Router->getControllerForRequest();
+			$Controller->fillResponse($Response);
+			$Response->Send();
+		}
+	}
+
+####config for auto-fillable routing:
+
+	{
+    	"routes": {
+    		"service": "ServiceAPI",
+    		"user": "UserAPI",
+    		"record": "RecordAPI"
+    	}
+    }
+
+####Example of auto-fillable Controller
+
+	class ServiceAPI extends AutoInstantiableController implements IRequireServiceLocator
+	{
+		public function fillResponse(\Jamm\HTTP\IResponse $Response)
+		{
+			$action = $this->ServiceLocator->getRequestParser()->getQueryArrayItem(1);
+			if ($action=='get_init_data')
+			{
+				$data = $this->ServiceLocator->getRedis()->get('data');
+				$Response->setBody($data);
+			}
+		}
+	}
+
+###Example of Front Controller without auto-filling of routes
 
 	$RedisServer        = new \Jamm\Memory\RedisServer();
     $Request            = new \Jamm\HTTP\Request();
@@ -34,7 +81,7 @@ PHP 5.3+
     $Controller->fillResponse($Response);
     $Response->Send();
 
-###Example of Controller
+###Example of usual (non-autofillable) Controller with Twig template rendering
 
 	class Fallback implements \Jamm\MVC\Controllers\IController
     {
@@ -68,7 +115,6 @@ PHP 5.3+
     		return new \Jamm\RedisDashboard\Model\StatsMonitor($Redis);
     	}
     }
-
 
 ###License
 [MIT](http://en.wikipedia.org/wiki/MIT_License)
