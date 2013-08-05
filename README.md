@@ -8,9 +8,17 @@ Most important thing here is interfaces - base of architecture.
 
 ###How it works
 Request, parsed in Front Controller, goes to Router, from Router to Controller, Controller fills the Response and this Response goes back to user.      
-If you want, you can use some models from Models folder, but you are not forced.   
+
+###Services inside
+There is some models, which can be useful:
+
+* Crypt - for passwords hashing and/or bidirectional encryption (based on mcrypt).  
+* Sessions - for sessions handling (in Redis by default, but configurable).    
+* SessionAuthenticator - work with cookies and CSRF-protection. Implemented AngularJS XSRF-token protection mechanism and prefix for JSON responses.
+
+If you want, you can use some services from Models folder - they are absolutely working and used in live projects.   
 In general, this library will never require your classes to be extended from classes of library. Main advice - prefer composition over inheritance.      
-Never require doesn't mean "not allow" - if you find that some of classes are good enough to use as a base classes - do it, they are designed to be useful in both ways.
+But "never require" doesn't mean "not allow" - if you find that some of classes are good enough to use as a base classes - do it, they are designed to be useful in both ways.
 
 ###Dependencies
 Jamm\\HTTP    
