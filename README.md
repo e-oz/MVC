@@ -21,7 +21,7 @@ In general, this library will never require your classes to be extended from cla
 But "never require" doesn't mean "not allow" - if you find that some of classes are good enough to use as a base classes - do it, they are designed to be useful in both ways.    
 
 Also, there is templates renderers in the Views folder (PHTML and Twig), and you are welcome to use them.    
-But if you don't mind - take a look at [AngularJS](http://angularjs.org/). With [AngularJS](http://angularjs.org/) you can use native HTML-pages as templates, which can be served by nginx or Apache without PHP, 
+But if you don't mind - take a look at [AngularJS](http://angularjs.org/). With AngularJS you can use native HTML-pages as templates, which can be served by nginx or Apache without PHP, 
 so your app will require much less resources of server. Also, it means less page reloading (because of ajax-requests) - performance and usability of your app will be much better.  
 It's just recommendation :)
 
