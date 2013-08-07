@@ -17,7 +17,7 @@ interface IRequestParser
 
 	/**
 	 * Set item of the query array
-	 * @param int $index
+	 * @param int    $index
 	 * @param string $value
 	 */
 	public function setQueryArrayItem($index, $value);

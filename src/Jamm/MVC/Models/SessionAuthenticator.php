@@ -33,23 +33,18 @@ class SessionAuthenticator
 
 	public function getSession()
 	{
-		if (empty($this->Session))
-		{
+		if (empty($this->Session)) {
 			$this->Session = $this->SessionStorage->getNewSession();
-			if (!$SessionCookie = $this->Request->getCookie($this->cookie_name))
-			{
+			if (!$SessionCookie = $this->Request->getCookie($this->cookie_name)) {
 				return $this->Session;
 			}
-			if (!$SessionCookie->getValue())
-			{
+			if (!$SessionCookie->getValue()) {
 				return $this->Session;
 			}
-			if (!($Session = $this->SessionStorage->getByID($SessionCookie->getValue())))
-			{
+			if (!($Session = $this->SessionStorage->getByID($SessionCookie->getValue()))) {
 				return $this->Session;
 			}
-			else
-			{
+			else {
 				$this->Session = $Session;
 			}
 		}
@@ -59,8 +54,7 @@ class SessionAuthenticator
 	public function logOut(IResponse $Response)
 	{
 		$Session = $this->getSession();
-		if ($Session->getId())
-		{
+		if ($Session->getId()) {
 			$this->SessionStorage->deleteByID($Session->getId());
 		}
 		$Response->setCookie(new Cookie($this->cookie_name, ''));
@@ -70,16 +64,13 @@ class SessionAuthenticator
 	{
 		$Session = $this->getSession();
 		$Session->setUserId($user_id);
-		if (!$this->SessionStorage->save($Session))
-		{
+		if (!$this->SessionStorage->save($Session)) {
 			return false;
 		}
-		if ($remember)
-		{
-			$expire = time()+94608000;
+		if ($remember) {
+			$expire = time() + 94608000;
 		}
-		else
-		{
+		else {
 			$expire = 0;
 		}
 		$Cookie = new Cookie($this->cookie_name, $Session->getId(), $expire);
@@ -110,8 +101,7 @@ class SessionAuthenticator
 
 	public function getReceivedCSRFToken()
 	{
-		if (empty($this->received_csrf_token))
-		{
+		if (empty($this->received_csrf_token)) {
 			$this->received_csrf_token = $this->Request->getHeaders($this->csrf_header);
 		}
 		return $this->received_csrf_token;
@@ -119,18 +109,19 @@ class SessionAuthenticator
 
 	public function isCSRFValid()
 	{
-		if (!$this->isAuthenticatedSession())
-		{
+		if (!$this->isAuthenticatedSession()) {
 			return true;
 		}
 		$token = $this->getReceivedCSRFToken();
-		if (empty($token)) return false;
+		if (empty($token)) {
+			return false;
+		}
 		$cookie_token = $this->getCookieCSRFToken();
-		if (empty($token)) return false;
-		if ($cookie_token===$token)
-		{
-			if ($this->verify_token)
-			{
+		if (empty($token)) {
+			return false;
+		}
+		if ($cookie_token === $token) {
+			if ($this->verify_token) {
 				return $this->isTokenValid($token, $this->getSession()->getId());
 			}
 			return true;
@@ -141,8 +132,7 @@ class SessionAuthenticator
 	public function getCookieCSRFToken()
 	{
 		$CsrfCookie = $this->Request->getCookie($this->csrf_cookie);
-		if (empty($CsrfCookie))
-		{
+		if (empty($CsrfCookie)) {
 			return false;
 		}
 		return $CsrfCookie->getValue();
@@ -150,13 +140,11 @@ class SessionAuthenticator
 
 	public function setCSRFTokenForSession(IResponse $Response)
 	{
-		if (!$this->isAuthenticatedSession())
-		{
+		if (!$this->isAuthenticatedSession()) {
 			return false;
 		}
 		$csrf_token = $this->getNewCSRFTokenForSession($this->getSession());
-		if (empty($csrf_token))
-		{
+		if (empty($csrf_token)) {
 			return false;
 		}
 		$Cookie = new Cookie($this->csrf_cookie, $csrf_token, 0, '/', '', false, false);
@@ -166,8 +154,7 @@ class SessionAuthenticator
 
 	public function getNewCSRFTokenForSession(ISession $Session)
 	{
-		if (!$Session->getId())
-		{
+		if (!$Session->getId()) {
 			trigger_error('To generate safe CSRF token ID of session is required', E_USER_WARNING);
 			return false;
 		}
@@ -176,13 +163,11 @@ class SessionAuthenticator
 
 	protected function isTokenValid($token, $session_id)
 	{
-		if (empty($session_id))
-		{
+		if (empty($session_id)) {
 			trigger_error('To verify CSRF token ID of session is required', E_USER_WARNING);
 			return false;
 		}
-		if (crypt($session_id, $token)===$token)
-		{
+		if (crypt($session_id, $token) === $token) {
 			return true;
 		}
 		return false;

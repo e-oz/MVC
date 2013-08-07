@@ -1,5 +1,6 @@
 <?php
 namespace Jamm\MVC\Views;
+
 abstract class PageRenderer implements IPageRenderer
 {
 	private $base_url;
@@ -13,12 +14,10 @@ abstract class PageRenderer implements IPageRenderer
 
 	protected function setURLsInVarsArray(array &$vars)
 	{
-		if (empty($vars['base_url']))
-		{
+		if (empty($vars['base_url'])) {
 			$vars['base_url'] = $this->getBaseURL();
 		}
-		if (empty($vars['full_url']))
-		{
+		if (empty($vars['full_url'])) {
 			$vars['full_url'] = $this->getFullUrl();
 		}
 	}

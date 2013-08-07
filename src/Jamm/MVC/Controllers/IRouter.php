@@ -1,5 +1,6 @@
 <?php
 namespace Jamm\MVC\Controllers;
+
 interface IRouter
 {
 	public function getControllerForRequest();

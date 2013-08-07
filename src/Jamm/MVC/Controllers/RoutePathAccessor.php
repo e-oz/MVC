@@ -1,5 +1,6 @@
 <?php
 namespace Jamm\MVC\Controllers;
+
 trait RoutePathAccessor
 {
 	private $route_path;

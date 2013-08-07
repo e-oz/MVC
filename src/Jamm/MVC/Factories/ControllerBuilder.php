@@ -15,13 +15,11 @@ class ControllerBuilder implements IControllerBuilder
 
 	public function buildController($Controller)
 	{
-		if ($Controller instanceof IRequireServiceLocator)
-		{
+		if ($Controller instanceof IRequireServiceLocator) {
 			/** @var IRequireServiceLocator $Controller */
 			$Controller->initServiceLocator($this->ServiceLocator);
 		}
-		if ($Controller instanceof IRequireSessionAuthenticator)
-		{
+		if ($Controller instanceof IRequireSessionAuthenticator) {
 			/** @var IRequireSessionAuthenticator $Controller */
 			$Controller->initSessionAuthenticator($this->ServiceLocator->getSessionAuthenticator());
 		}

@@ -1,5 +1,6 @@
 <?php
 namespace Jamm\MVC\Controllers;
+
 class RequestParser implements IRequestParser
 {
 	private $query_array;
@@ -15,27 +16,21 @@ class RequestParser implements IRequestParser
 
 	protected function getRequestURI()
 	{
-		if (!isset($this->request_uri))
-		{
+		if (!isset($this->request_uri)) {
 			$this->script_name = pathinfo($this->Request->getHeaders('SCRIPT_NAME'), PATHINFO_BASENAME);
 			$path_info         = $this->Request->getHeaders('PATH_INFO');
-			if ($this->Request->getHeaders('REQUEST_URI'))
-			{
+			if ($this->Request->getHeaders('REQUEST_URI')) {
 				$this->request_uri = $this->Request->getHeaders('REQUEST_URI');
 			}
-			else
-			{
+			else {
 				$this->request_uri = !empty($path_info) ? $path_info : $this->Request->getHeaders('QUERY_STRING');
 			}
-			if (empty($this->request_uri))
-			{
+			if (empty($this->request_uri)) {
 				$dirname = dirname($this->script_name);
-				if (strpos($this->Request->getHeaders('REQUEST_URI'), $dirname)===0)
-				{
+				if (strpos($this->Request->getHeaders('REQUEST_URI'), $dirname) === 0) {
 					$this->request_uri = substr($this->Request->getHeaders('REQUEST_URI'), strlen($dirname));
 				}
-				elseif (empty($dirname) || $dirname==='.')
-				{
+				elseif (empty($dirname) || $dirname === '.') {
 					$this->request_uri = $this->Request->getHeaders('REQUEST_URI');
 				}
 			}
@@ -47,34 +42,39 @@ class RequestParser implements IRequestParser
 	{
 		$Request     = $this->Request;
 		$request_uri = $this->getRequestURI();
-		if (empty($request_uri)) return false;
-		while (strpos($request_uri, '..')!==false)
-		{
+		if (empty($request_uri)) {
+			return false;
+		}
+		while (strpos($request_uri, '..') !== false) {
 			$request_uri = str_replace('..', '', $request_uri);
 		}
-		if (empty($request_uri)) return false;
-		if ($request_uri[0]==='/')
-		{
+		if (empty($request_uri)) {
+			return false;
+		}
+		if ($request_uri[0] === '/') {
 			$request_uri = substr($request_uri, 1);
 		}
-		if (strpos($request_uri, $this->script_name)===0) $request_uri = substr($request_uri, strlen($this->script_name));
-		if ($request_uri[0]==='&') $request_uri = substr($request_uri, 1);
-		if ((($delimiter_pos = strpos($request_uri, '?'))!==false) || (($delimiter_pos = strpos($request_uri, '&'))!==false))
-		{
-			if ($Request->getMethod()==$Request::method_GET)
-			{
+		if (strpos($request_uri, $this->script_name) === 0) {
+			$request_uri = substr($request_uri, strlen($this->script_name));
+		}
+		if ($request_uri[0] === '&') {
+			$request_uri = substr($request_uri, 1);
+		}
+		if ((($delimiter_pos = strpos($request_uri, '?')) !== false) || (($delimiter_pos = strpos($request_uri, '&')) !== false)) {
+			if ($Request->getMethod() == $Request::method_GET) {
 				$get_array = array();
-				parse_str(substr($request_uri, $delimiter_pos+1), $get_array);
+				parse_str(substr($request_uri, $delimiter_pos + 1), $get_array);
 				$Request->setData($get_array);
 			}
 			$this->request_uri = substr($request_uri, 0, $delimiter_pos);
 			$request_uri       = $this->request_uri;
 		}
-		if (strpos($request_uri, '/')!==false)
-		{
+		if (strpos($request_uri, '/') !== false) {
 			$this->query_array = explode('/', $request_uri);
 		}
-		else $this->query_array = array($request_uri);
+		else {
+			$this->query_array = array($request_uri);
+		}
 		return $this->query_array;
 	}
 
@@ -87,8 +87,7 @@ class RequestParser implements IRequestParser
 	/** @return array */
 	public function getQueryArray()
 	{
-		if (empty($this->query_array))
-		{
+		if (empty($this->query_array)) {
 			$this->parseRequestURI();
 		}
 		return $this->query_array;
@@ -112,7 +111,7 @@ class RequestParser implements IRequestParser
 
 	/**
 	 * Set item of the query array
-	 * @param int $index
+	 * @param int    $index
 	 * @param string $value
 	 */
 	public function setQueryArrayItem($index, $value)
@@ -124,22 +123,20 @@ class RequestParser implements IRequestParser
 	{
 		$data    = $this->Request->getData();
 		$Request = $this->Request;
-		if (!empty($data) && $Request->getMethod()===$Request::method_GET)
-		{
-			if (is_array($data))
-			{
+		if (!empty($data) && $Request->getMethod() === $Request::method_GET) {
+			if (is_array($data)) {
 				$values = array_values($data);
-				if (!empty($values))
-				{
+				if (!empty($values)) {
 					$values_without_spaces = implode('', $values);
-					if (!empty($values_without_spaces))
-					{
+					if (!empty($values_without_spaces)) {
 						return $data;
 					}
 				}
 			}
 			$values = $this->getArgumentsFromQueryString($skip_path_parts_count);
-			if (!empty($values)) return $values;
+			if (!empty($values)) {
+				return $values;
+			}
 		}
 		return $data;
 	}
@@ -147,8 +144,7 @@ class RequestParser implements IRequestParser
 	private function getArgumentsFromQueryString($skip_path_parts_count = 1)
 	{
 		$parts = $this->getQueryArray();
-		if (!empty($parts))
-		{
+		if (!empty($parts)) {
 			return array_slice($parts, $skip_path_parts_count);
 		}
 		return NULL;
@@ -157,21 +153,17 @@ class RequestParser implements IRequestParser
 	public function getAcceptedSerializer()
 	{
 		$serialization_method = $this->Request->getAccept();
-		if (stripos($serialization_method, 'JSON')!==false)
-		{
+		if (stripos($serialization_method, 'JSON') !== false) {
 			$Serializer = new \Jamm\HTTP\SerializerJSON();
-			if (!empty($this->JSONP_callback_name))
-			{
+			if (!empty($this->JSONP_callback_name)) {
 				$callback = $this->Request->getData('callback');
-				if (!empty($callback))
-				{
+				if (!empty($callback)) {
 					$Serializer->setJSONPCallbackName($callback);
 				}
 			}
 			return $Serializer;
 		}
-		elseif ($serialization_method==='XML')
-		{
+		elseif ($serialization_method === 'XML') {
 			return new \Jamm\HTTP\SerializerXML();
 		}
 		return NULL;

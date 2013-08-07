@@ -31,34 +31,29 @@ abstract class RESTController extends AutoInstantiableController implements IAut
 		$this->Parser   = $this->ServiceLocator->getRequestParser();
 		$this->Response = $Response;
 		$this->beforeFillingResponse();
-		switch ($this->Request->getMethod())
-		{
+		switch ($this->Request->getMethod()) {
 			case 'GET':
 				return $this->GET();
 			case 'POST':
-				if (!$this->isCSRFSafe())
-				{
+				if (!$this->isCSRFSafe()) {
 					$this->Response->setStatusCode(403);
 					return false;
 				}
 				return $this->POST();
 			case 'PUT':
-				if (!$this->isCSRFSafe())
-				{
+				if (!$this->isCSRFSafe()) {
 					$this->Response->setStatusCode(403);
 					return false;
 				}
 				return $this->PUT();
 			case 'DELETE':
-				if (!$this->isCSRFSafe())
-				{
+				if (!$this->isCSRFSafe()) {
 					$this->Response->setStatusCode(403);
 					return false;
 				}
 				return $this->DELETE();
 			case 'PATCH':
-				if (!$this->isCSRFSafe())
-				{
+				if (!$this->isCSRFSafe()) {
 					$this->Response->setStatusCode(403);
 					return false;
 				}
@@ -115,10 +110,8 @@ abstract class RESTController extends AutoInstantiableController implements IAut
 	{
 		$this->Response->setStatusCode(200);
 		$headers_string = '';
-		foreach ($this->Request->getHeaders() as $header => $value)
-		{
-			if (substr($header, 0, 5)==='HTTP_')
-			{
+		foreach ($this->Request->getHeaders() as $header => $value) {
+			if (substr($header, 0, 5) === 'HTTP_') {
 				$header = substr($header, 5);
 			}
 			$header = str_replace('_', '-', $header);

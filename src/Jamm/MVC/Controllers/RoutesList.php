@@ -29,8 +29,7 @@ class RoutesList
 
 	public function setFromJSONfile($json_file_path)
 	{
-		if (!($content = file_get_contents($json_file_path)))
-		{
+		if (!($content = file_get_contents($json_file_path))) {
 			return false;
 		}
 		return $this->setFromJSON($content);

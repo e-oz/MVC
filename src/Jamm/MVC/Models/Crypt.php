@@ -15,8 +15,7 @@ class Crypt
 
 	protected function requirePasswordLib()
 	{
-		if (!defined('PASSWORD_DEFAULT'))
-		{
+		if (!defined('PASSWORD_DEFAULT')) {
 			require __DIR__.'/password_compat.php';
 		}
 	}
@@ -49,6 +48,9 @@ class Crypt
 	 */
 	public function getDecryptedString($input, $password = '')
 	{
+		if (empty($input)) {
+			return '';
+		}
 		$encryption_key = $this->getEncKey($password);
 		$input          = hex2bin($input);
 		$iv_size        = mcrypt_get_iv_size($this->cipher, $this->mode);
@@ -60,14 +62,11 @@ class Crypt
 
 	protected function getEncKey($password)
 	{
-		if (empty($password))
-		{
-			if (!empty($this->encryption_string))
-			{
+		if (empty($password)) {
+			if (!empty($this->encryption_string)) {
 				$password = $this->encryption_string;
 			}
-			else
-			{
+			else {
 				$password = md5(86400);
 			}
 		}

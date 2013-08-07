@@ -32,8 +32,7 @@ class ControllersServiceLocator implements IControllersServiceLocator
 	 */
 	public function getRequest()
 	{
-		if (empty($this->Request))
-		{
+		if (empty($this->Request)) {
 			$this->Request = $this->ServiceFactory->getRequest();
 		}
 		return $this->Request;
@@ -41,14 +40,12 @@ class ControllersServiceLocator implements IControllersServiceLocator
 
 	public function getResponse()
 	{
-		if (empty($this->Response))
-		{
+		if (empty($this->Response)) {
 
 			$this->Response = $this->getServiceFactory()->getResponse();
 			$RequestParser  = $this->getRequestParser();
 			$Serializer     = $RequestParser->getAcceptedSerializer();
-			if ($Serializer instanceof SerializerJSON)
-			{
+			if ($Serializer instanceof SerializerJSON) {
 				/**
 				 * Prefix for AngularJS, as JSON Vulnerability Protection
 				 * @link http://docs.angularjs.org/api/ng.$http
@@ -77,8 +74,7 @@ class ControllersServiceLocator implements IControllersServiceLocator
 	 */
 	public function getRequestParser()
 	{
-		if (empty($this->RequestParser))
-		{
+		if (empty($this->RequestParser)) {
 			$this->RequestParser = new RequestParser($this->getRequest());
 		}
 		return $this->RequestParser;
@@ -115,8 +111,7 @@ class ControllersServiceLocator implements IControllersServiceLocator
 
 	public function getSessionStorage()
 	{
-		if (empty($this->SessionStorage))
-		{
+		if (empty($this->SessionStorage)) {
 			$this->SessionStorage = $this->ServiceFactory->getSessionStorage();
 		}
 		return $this->SessionStorage;

@@ -1,5 +1,6 @@
 <?php
 namespace Jamm\MVC\Controllers;
+
 /**
  * Class to route query from Request to Response
  * Should be extended and method getRequestHandler should be implemented
@@ -32,25 +33,20 @@ class Router implements IRouter
 	protected function getRouteFromRequest(IRequestParser $RequestParser)
 	{
 		$parts = $RequestParser->getQueryArray();
-		if (empty($parts))
-		{
+		if (empty($parts)) {
 			return '/';
 		}
-		foreach ($this->routes as $route => $fx)
-		{
+		foreach ($this->routes as $route => $fx) {
 			$pattern = '';
-			foreach ($parts as $part)
-			{
+			foreach ($parts as $part) {
 				$pattern .= $part;
-				if ($route===$pattern)
-				{
+				if ($route === $pattern) {
 					return $route;
 				}
 				$pattern .= '/';
 			}
 		}
-		if (!isset($parts[0]) || empty($parts[0]))
-		{
+		if (!isset($parts[0]) || empty($parts[0])) {
 			$parts[0] = '/';
 		}
 		return $parts[0];
@@ -59,8 +55,7 @@ class Router implements IRouter
 	protected function getRequestHandler($route)
 	{
 		$Controller = $this->getControllerForRoute($route);
-		if (empty($Controller))
-		{
+		if (empty($Controller)) {
 			$Controller = $this->getFallbackController();
 		}
 		return $Controller;
@@ -84,19 +79,19 @@ class Router implements IRouter
 	private function getFilteredRouteString($route)
 	{
 		$route = trim(trim($route, '/'));
-		if (empty($route)) $route = '/';
+		if (empty($route)) {
+			$route = '/';
+		}
 		return $route;
 	}
 
 	public function getControllerForRoute($route)
 	{
-		if (empty($this->routes[$route]))
-		{
+		if (empty($this->routes[$route])) {
 			return false;
 		}
 		$controller = $this->routes[$route];
-		if (is_callable($controller))
-		{
+		if (is_callable($controller)) {
 			$controller           = $controller();
 			$this->routes[$route] = $controller;
 		}
