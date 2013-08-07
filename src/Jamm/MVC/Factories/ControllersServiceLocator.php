@@ -21,6 +21,7 @@ class ControllersServiceLocator implements IControllersServiceLocator
 	private $ServiceFactory;
 	private $Response;
 	private $SessionStorage;
+	private $JSON_prefix = ")]}',\n";
 
 	public function __construct(ServiceFactory $ServiceFactory)
 	{
@@ -52,7 +53,9 @@ class ControllersServiceLocator implements IControllersServiceLocator
 				 *       in that controller, and prefix will not be added.
 				 */
 				/** @var SerializerJSON $Serializer */
-				$Serializer->setJSONPrefix(")]}',\n");
+				if (!empty($this->JSON_prefix)) {
+					$Serializer->setJSONPrefix($this->JSON_prefix);
+				}
 			}
 			$this->Response->setSerializer($Serializer);
 			$this->getSessionAuthenticator()->setCSRFTokenForSession($this->Response);
@@ -114,5 +117,13 @@ class ControllersServiceLocator implements IControllersServiceLocator
 			$this->SessionStorage = $this->ServiceFactory->getSessionStorage();
 		}
 		return $this->SessionStorage;
+	}
+
+	/**
+	 * @param string $JSON_prefix
+	 */
+	public function setJSONPrefix($JSON_prefix = ")]}',\n")
+	{
+		$this->JSON_prefix = $JSON_prefix;
 	}
 }
