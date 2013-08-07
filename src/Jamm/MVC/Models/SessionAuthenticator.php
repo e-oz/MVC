@@ -28,7 +28,8 @@ class SessionAuthenticator
 
 	public function isAuthenticatedSession()
 	{
-		return ($this->getSession()->getUserId() > 0);
+		$id = $this->getSession()->getUserId();
+		return !empty($id);
 	}
 
 	public function getSession()

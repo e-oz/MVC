@@ -41,7 +41,6 @@ class ControllersServiceLocator implements IControllersServiceLocator
 	public function getResponse()
 	{
 		if (empty($this->Response)) {
-
 			$this->Response = $this->getServiceFactory()->getResponse();
 			$RequestParser  = $this->getRequestParser();
 			$Serializer     = $RequestParser->getAcceptedSerializer();
