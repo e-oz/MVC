@@ -27,10 +27,10 @@ class RequestParser implements IRequestParser
 			}
 			if (empty($this->request_uri)) {
 				$dirname = dirname($this->script_name);
-				if (strpos($this->Request->getHeaders('REQUEST_URI'), $dirname) === 0) {
+				if ($dirname && strpos($this->Request->getHeaders('REQUEST_URI'), $dirname) === 0) {
 					$this->request_uri = substr($this->Request->getHeaders('REQUEST_URI'), strlen($dirname));
 				}
-				elseif (empty($dirname) || $dirname === '.') {
+				else {
 					$this->request_uri = $this->Request->getHeaders('REQUEST_URI');
 				}
 			}
