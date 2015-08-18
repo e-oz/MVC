@@ -54,7 +54,7 @@ class RequestParser implements IRequestParser
 		if ($request_uri[0] === '/') {
 			$request_uri = substr($request_uri, 1);
 		}
-		if (strpos($request_uri, $this->script_name) === 0) {
+		if (!empty($this->script_name) && strpos($request_uri, $this->script_name) === 0) {
 			$request_uri = substr($request_uri, strlen($this->script_name));
 		}
 		if ($request_uri[0] === '&') {
